@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversation</title>
+</head>
+<body onload="load()">
+    <div class="searchUser" id="searchUser">
+        <p>Enter the username of the person you would like to message</p><br>
+        <input type="text" id="search" name="search">
+        <button onclick="searchUser()">Search</button>
+    </div>
+
+    <div class="message_holder"></div>
+    <form action="" method="GET">
+          <input type="text" class="message" placeholder="Messages"/>
+          <input type="submit"/>
+        </form>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script type="text/javascript">
+        var receiver = ""
+        function load() {
+            document.getElementById("searchUser").style.display = 'block';
+            document.getElementById('message_holder').style.display = 'none';
+        }
+        function searchUser() {
+            receiver = document.getElementById('search').value;
+            document.getElementById("searchUser").style.display = 'none';
+            document.getElementById('message_holder').style.display = 'block';
+        }
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+      socket.on( 'connect', function() {
+        var form = $( 'form' ).on( 'submit', function( e ) {
+          e.preventDefault()
+          let user_input = $( 'input.message' ).val()
+          socket.emit( 'sendMsg', {
+            user_name : "{{ user_name }}",
+            message : user_input,
+              recipient: receiver
+          } )
+          $( 'input.message' ).val( '' ).focus()
+        } )
+      } )
+      socket.on('response', function( msg ) {
+        console.log( msg )
+        if( msg.user_name == '{{ user_name }}' || msg.recipient == '{{ user_name }}' ) {
+          $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+'</b> '+msg.message+'' )
+        }
+      })
+
+    </script>
+</html>
+
+</html>
