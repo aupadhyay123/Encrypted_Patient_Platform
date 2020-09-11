@@ -9,7 +9,7 @@ client = FusionAuthClient(Config.FUSION_TESTAPIKEY, Config.FUSION_LOCAL)
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return 'Rest in Peace Kobe!'
 
 @app.route('/login', methods=['POST'])
 def loginEndpoint():
