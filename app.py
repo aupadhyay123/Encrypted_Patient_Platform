@@ -20,7 +20,7 @@ def loginEndpoint():
         user_login_request = {
             'loginId': user,
             'password': password,
-            'applicationId': '2c61c7e6-79d1-4e66-8784-d06d9c65867e'
+            'applicationId': '5ed60575-5b69-4636-8d16-57d1fa878734'
         }
         client_response = client.login(user_login_request)
         if client_response.was_successful():
@@ -36,13 +36,14 @@ def loginEndpoint():
     user_login_request = {
         'loginId': user,
         'password': password,
-        'applicationId': '2c61c7e6-79d1-4e66-8784-d06d9c65867e'
+        'applicationId': '5ed60575-5b69-4636-8d16-57d1fa878734'
     }
     client_response = client.login(user_login_request)
     if client_response.was_successful():
         #print('success')
 
         success_response = client_response.success_response
+        print(success_response)
         user_name = success_response['user']['username']
 
         return redirect(url_for('conversation', user_name=user_name))
@@ -62,7 +63,7 @@ def registerEndpoint():
 
     user_registration_request = {
         'registration': {
-            'applicationId': '2c61c7e6-79d1-4e66-8784-d06d9c65867e',
+            'applicationId': '5ed60575-5b69-4636-8d16-57d1fa878734',
         },
         'user': {
             'password': password,
