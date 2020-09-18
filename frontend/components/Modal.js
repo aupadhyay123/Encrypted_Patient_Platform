@@ -1,10 +1,11 @@
 import Link from "next/link";
 import FormInput from "./FormInput";
+import styles from './Modal.module.css';
 
 export default function Modal(props) {
   if(props.page === 'register') {
     return (
-      <div>
+      <div className={styles.container}>
         <div>
           <h1>SIGN UP</h1>
           <p>Already have an account?</p>
@@ -21,11 +22,12 @@ export default function Modal(props) {
     );
   }
   else if(props.page === 'login') {
-    <div>
+    return (
+      <div>
         <div>
           <h1>SIGN IN</h1>
           <p>Don't have an account?</p>
-          <Link href='/login'>Sign Up</Link>
+          <Link href='/register'>Sign Up</Link>
         </div>
         <form>
           <FormInput title='Email' type='text' />
@@ -33,5 +35,6 @@ export default function Modal(props) {
           <input type='submit' value='SIGN UP' />
         </form>
       </div>
+    );
   }
 }
