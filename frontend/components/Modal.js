@@ -11,7 +11,7 @@ export default function Modal(props) {
         <div className={styles.input}>
           <div className={styles.modalHeader}>
             <h1>SIGN UP</h1>
-            <p>Already have an account? <Link href='/login'>Sign In</Link></p>
+            <p>Already have an account? <Link href='/login' className='link'>Sign In</Link></p>
           </div>
           <form className={styles.form} method='POST'>
             <FormInput title='Name' type='text' />
@@ -31,7 +31,7 @@ export default function Modal(props) {
         <div className={styles.input}>
           <div className={styles.modalHeader}>
             <h1>SIGN IN</h1>
-            <p>Don't have an account? <Link href='/register'>Sign Up</Link></p>
+            <p>Don't have an account? <Link href='/register' className='link'>Sign Up</Link></p>
           </div>
           <form className={styles.form}>
             <FormInput title='Email' type='text' />

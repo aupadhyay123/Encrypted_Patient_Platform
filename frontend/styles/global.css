@@ -2,4 +2,7 @@
 
 html, body {
   font-family: "Abel", sans-serif;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
 }

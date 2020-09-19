@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Layout from "../components/Layout";
 import Head from "next/head";
+import Navbar from '../components/Navbar';
 import Modal from "../components/Modal";
 
 export default function Register(props) {
@@ -9,6 +10,7 @@ export default function Register(props) {
       <Head>
         <title>SIGN UP</title>
       </Head>
+      <Navbar />
       <Modal page='register' />
     </Layout>
   );
