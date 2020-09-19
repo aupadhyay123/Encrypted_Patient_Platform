@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Layout from "../components/Layout";
 import Head from "next/head";
 import Modal from "../components/Modal";

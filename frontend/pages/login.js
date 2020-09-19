@@ -8,7 +8,9 @@ export default function Login(props) {
       <Head>
         <title>LOGIN</title>
       </Head>
-      <Modal page='login' />
+      <form>
+        <Modal page='login' />
+      </form>
     </Layout>
   );
 }

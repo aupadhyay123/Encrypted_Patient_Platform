@@ -1,0 +1,19 @@
+.inputContainer {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 90%;
+}
+
+.inputHeader {
+  margin: 0;
+}
+
+.inputField {
+  width: 100%;
+  outline: 0;
+  border-width: 0 0 2px 0;
+}
+
+.inputField:focus {
+  border-color: #9AC355;
+}

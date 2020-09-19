@@ -3,37 +3,43 @@ import FormInput from "./FormInput";
 import styles from './Modal.module.css';
 
 export default function Modal(props) {
+
+
   if(props.page === 'register') {
     return (
       <div className={styles.container}>
-        <div>
-          <h1>SIGN UP</h1>
-          <p>Already have an account?</p>
-          <Link href='/login'>Sign In</Link>
+        <div className={styles.input}>
+          <div className={styles.modalHeader}>
+            <h1>SIGN UP</h1>
+            <p>Already have an account? <Link href='/login'>Sign In</Link></p>
+          </div>
+          <form className={styles.form} method='POST'>
+            <FormInput title='Name' type='text' />
+            <FormInput title='Email' type='text' />
+            <FormInput title='Phone Number' type='text' />
+            <FormInput title='Password' type='password' />
+            <input type='submit' value='SIGN UP' className={styles.submitButton} id={styles.registerButton} />
+          </form>
         </div>
-        <form>
-          <FormInput title='Name' type='text' />
-          <FormInput title='Email' type='text' />
-          <FormInput title='Phone Number' type='text' />
-          <FormInput title='Password' type='password' />
-          <input type='submit' value='SIGN UP' />
-        </form>
+        <div id={styles.registerImage} className={styles.imageContainer} />
       </div>
     );
   }
   else if(props.page === 'login') {
     return (
-      <div>
-        <div>
-          <h1>SIGN IN</h1>
-          <p>Don't have an account?</p>
-          <Link href='/register'>Sign Up</Link>
+      <div className={styles.container}>
+        <div className={styles.input}>
+          <div className={styles.modalHeader}>
+            <h1>SIGN IN</h1>
+            <p>Don't have an account? <Link href='/register'>Sign Up</Link></p>
+          </div>
+          <form className={styles.form}>
+            <FormInput title='Email' type='text' />
+            <FormInput title='Password' type='password' />
+            <input type='submit' value='SIGN UP' className={styles.submitButton} id={styles.loginButton} />
+          </form>
         </div>
-        <form>
-          <FormInput title='Email' type='text' />
-          <FormInput title='Password' type='password' />
-          <input type='submit' value='SIGN UP' />
-        </form>
+        <div id={styles.loginImage} className={styles.imageContainer} />
       </div>
     );
   }
