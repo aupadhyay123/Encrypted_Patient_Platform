@@ -1,0 +1,9 @@
+.menu {
+  width: 75px;
+  height: 100%;
+  background-color: #9AC355;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
