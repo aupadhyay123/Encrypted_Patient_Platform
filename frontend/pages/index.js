@@ -15,7 +15,7 @@ export default function Landing() {
           <title>VAUNECT</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <Navbar/>
+        <Navbar />
         <Modal page='index'/>
       </Layout>
     </div>

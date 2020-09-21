@@ -10,13 +10,8 @@ marshmallow = "==2.16.3"
 pymongo = "==3.7.2"
 flask-sqlalchemy = "2.4.4"
 fusionauth-client = "*"
-<<<<<<< HEAD
 python-socketio = "*"
 flask-socketio = "*"
-=======
-flask-socketio = "*"
-python-socketio = "*"
->>>>>>> 3a6cd25f0ce74960c38bd96594503b3225336931
 
 [requires]
 python_version = "3.8"
