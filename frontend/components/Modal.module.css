@@ -1,0 +1,80 @@
+.container {
+  width: 70%;
+  height: 75%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.input {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30%;
+  background-color: #fff                                                    ;
+}
+
+.modalHeader {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modalHeader h1 {
+  margin: 0;
+}
+
+.modalHeader p {
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.submitButton {
+  font-size: 22px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
+  border-radius: 15px;
+  border: none;
+  font-family: 'Abel', 'sans-serif';
+  color: #ffffff;
+}
+
+#loginButton {
+  background-color: #0459A7;
+}
+
+#registerButton {
+  background-color: #9AC355;
+}
+
+.imageContainer {
+  height: 100%;
+  width: 70%;
+}
+
+#registerImage {
+  background-image: url('/images/register_modal.jpg');
+  background-size: cover;
+  background-position: 40% 40%;
+}
+
+#loginImage {
+  background-image: url('/images/login_modal.jpg');
+  background-size: cover;
+}
