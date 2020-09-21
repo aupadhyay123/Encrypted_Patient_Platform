@@ -43,4 +43,14 @@ export default function Modal(props) {
       </div>
     );
   }
+  else if(props.page === 'index') {
+    return (
+      <div className={styles.container}>
+        <div id={styles.logoImage} />
+        <div className={styles.content}>
+          <h1>HELLO</h1>
+        </div>
+      </div>
+    );
+  }
 }

@@ -78,3 +78,12 @@
   background-image: url('/images/login_modal.jpg');
   background-size: cover;
 }
+
+#logoImage {
+  background-image: url('/images/logo.png');
+  background-size: cover;
+  position: relative;
+  left: 15%;
+  height: 100%;
+  width: 70%;
+}
