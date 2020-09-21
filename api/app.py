@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, make_response, render_template, redirect, url_for
 from fusionauth.fusionauth_client import FusionAuthClient
 from flask_socketio import SocketIO
-from config import Config
+from .config import Config
 from flask_sqlalchemy import SQLAlchemy
 
 # ...app config...
