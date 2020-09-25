@@ -10,14 +10,14 @@ import Modal from '../components/Modal';
 export default function Landing() {
   return (
     <div>
-      <Layout>
         <Head>
           <title>VAUNECT</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <Navbar />
-        <Modal page='index'/>
-      </Layout>
+
+        <img src={'/images/logo.png'} style={{width: '60%', position: 'relative', marginTop: '10%', left: '20%'}} />
+      
     </div>
   );
 }
