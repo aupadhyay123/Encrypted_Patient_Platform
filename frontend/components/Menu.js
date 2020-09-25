@@ -4,17 +4,10 @@ import styles from './Menu.module.css';
 // component imports
 import MenuItem from './MenuItem';
 
-const ItemArr = [
-  'profile',
-  'messages',
-  'search',
-  'settings'
-]
-
 export default function Menu(props) {
-  const Items = () => ItemArr.map(item => {
+  const Items = () => props.items.map(item => {
     return (
-      <MenuItem link={'/' + item} label={item} />
+      <MenuItem label={item} />
     );
   });
 

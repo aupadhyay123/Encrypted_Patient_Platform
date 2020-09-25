@@ -1,7 +1,7 @@
 import Layout from "../components/Layout";
 import Head from "next/head";
 import Navbar from '../components/Navbar';
-import Modal from "../components/Modal";
+import RegisterModal from "../components/RegisterModal";
 
 export default function Register(props) {
   return (
@@ -10,7 +10,7 @@ export default function Register(props) {
         <title>SIGN UP</title>
       </Head>
       <Navbar />
-      <Modal page='register' />
+      <RegisterModal />
     </Layout>
   );
 }
