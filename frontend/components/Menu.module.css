@@ -22,3 +22,7 @@
 .menu a:hover {
   background-color: #9AD355;
 }
+
+.menu a:active  {
+  background-color: #9AC355;
+}

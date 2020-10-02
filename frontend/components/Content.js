@@ -1,6 +1,9 @@
 // css
 import styles from './Content.module.css';
 
+// import
+import Profile from './Profile';
+
 export default function Content(props) {
   return (
     <div className={styles.content}>
