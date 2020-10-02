@@ -9,7 +9,7 @@ import { useState } from "react"
 import Layout from '../../components/Layout';
 import Menu from '../../components/Menu';
 
-const items = [
+const sections = [
   'profile',
   'messages',
   'search',
@@ -22,11 +22,28 @@ export default function User() {
   const router = useRouter();
   const { user } = router.query;
 
+  const Content = () => {
+    if(section === 'messages') {
+      
+    }
+    else if(section === 'profile') {
+
+    }
+    else if(section === 'settings') {
+
+    }
+    else if(section === 'search') {
+
+    }
+  };
+
   return (
     <Layout>
       <Head>
         <title>Dashboard</title>
       </Head>
+      <Menu />
+      <Content />
     </Layout>
   );
 }
