@@ -6,6 +6,7 @@
   flex-direction: column;
   justify-content: start;
   align-items: center;
+  position: fixed;
 }
 
 .menu a {

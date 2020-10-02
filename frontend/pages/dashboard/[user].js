@@ -8,6 +8,7 @@ import { useState } from "react"
 // components
 import Layout from '../../components/Layout';
 import Menu from '../../components/Menu';
+import Content from '../../components/Content';
 
 const sections = [
   'profile',
@@ -22,28 +23,13 @@ export default function User() {
   const router = useRouter();
   const { user } = router.query;
 
-  const Content = () => {
-    if(section === 'messages') {
-      
-    }
-    else if(section === 'profile') {
-
-    }
-    else if(section === 'settings') {
-
-    }
-    else if(section === 'search') {
-
-    }
-  };
-
   return (
     <Layout>
       <Head>
         <title>Dashboard</title>
       </Head>
       <Menu />
-      {/* <Content /> */}
+      <Content />
     </Layout>
   );
 }
