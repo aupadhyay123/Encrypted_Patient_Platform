@@ -1,0 +1,12 @@
+.search {
+    position: relative;
+    width: 80%;
+    left: 10%;
+    margin-top: 2%;
+}
+
+.search input {
+    position: relative;
+    width: 60;
+    height: 5%;
+}
