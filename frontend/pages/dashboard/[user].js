@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 // react.js
-import { useState } from "react"
+import { useState } from "react";
 
 // components
 import Layout from '../../components/Layout';
@@ -28,8 +28,8 @@ export default function User() {
       <Head>
         <title>Dashboard</title>
       </Head>
-      <Menu />
-      <Content />
+      <Menu updateSection={(section) => setSection(section)} />
+      <Content section={section} />
     </Layout>
   );
 }

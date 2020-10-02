@@ -7,10 +7,10 @@ import MenuItem from './MenuItem';
 export default function Menu(props) {
   return (
     <div className={styles.menu}>
-      <a href={'../'}>Profile</a>
-      <a href={'../'}>Messages</a>
-      <a href={'../'}>Search</a>
-      <a href={'../'}>Settings</a>
+      <a onClick={props.updateSection('profile')}>Profile</a>
+      <a onClick={props.updateSection('messages')}>Messages</a>
+      <a onClick={props.updateSection('search')}>Search</a>
+      <a onClick={props.updateSection('settings')}>Settings</a>
     </div>
   );
 }
