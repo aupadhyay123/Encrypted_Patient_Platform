@@ -4,8 +4,6 @@ import styles from './Navbar.module.css';
 // next.js
 import Link from 'next/link';
 
-// react-bootstrap
-
 export default function Navbar(props) {
   return (
     <div className={styles.navbar}>

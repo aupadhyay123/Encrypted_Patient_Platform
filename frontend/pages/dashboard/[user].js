@@ -6,9 +6,9 @@ import Head from "next/head";
 import { useState } from "react";
 
 // components
-import Layout from '../../components/Layout';
-import Menu from '../../components/Menu';
-import Content from '../../components/Content';
+import Layout from '../../components/miscellaneous/Layout';
+import Menu from '../../components/dashboard/Menu';
+import Content from '../../components/dashboard/Content';
 
 const sections = [
   'profile',

@@ -1,7 +1,7 @@
 import Head from "next/head";
-import Layout from "../components/Layout";
-import LoginModal from "../components/LoginModal";
-import Navbar from "../components/Navbar";
+import Layout from "../components/miscellaneous/Layout";
+import LoginModal from "../components/modal/LoginModal";
+import Navbar from "../components/miscellaneous/Navbar";
 
 export default function Login(props) {
   return (

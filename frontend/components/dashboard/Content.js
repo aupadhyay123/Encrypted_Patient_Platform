@@ -2,10 +2,10 @@
 import styles from './Content.module.css';
 
 // components
-import Profile from './Profile';
-import Messages from './Messages';
-import Settings from './Settings';
-import Search from './Search';
+import Profile from '../profile/Profile';
+import Messages from '../messages/Messages';
+import Settings from '../settings/Settings';
+import Search from '../search/Search';
 
 export default function Content(props) {
   return (
