@@ -1,14 +1,15 @@
 // css
 import styles from './Content.module.css';
 
-// import
+// components
 import Profile from './Profile';
+import Messages from './Messages';
 
 export default function Content(props) {
   return (
     <div className={styles.content}>
       {props.section === 'messages' &&
-        <h1>messages</h1>
+        <Messages />
       }
       {props.section === 'profile' &&
         <Profile />
