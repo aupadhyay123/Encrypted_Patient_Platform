@@ -5,15 +5,12 @@ import styles from './Menu.module.css';
 import MenuItem from './MenuItem';
 
 export default function Menu(props) {
-  const Items = () => props.items.map(item => {
-    return (
-      <MenuItem label={item} />
-    );
-  });
-
   return (
     <div className={styles.menu}>
-      {/* <Items /> */}
+      <a href={'../'}>Profile</a>
+      <a href={'../'}>Messages</a>
+      <a href={'../'}>Search</a>
+      <a href={'../'}>Settings</a>
     </div>
   );
 }

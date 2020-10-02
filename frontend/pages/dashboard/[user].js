@@ -27,6 +27,7 @@ export default function User() {
       <Head>
         <title>Dashboard</title>
       </Head>
+      <Menu />
     </Layout>
   );
 }
