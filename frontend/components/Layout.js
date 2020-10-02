@@ -1,10 +1,10 @@
 // css
 import styles from './Layout.module.css';
 
-function Layout({ children }) {
+function Layout(props) {
   return (
     <div className={styles.container}>
-      {children}
+      {props.children}
     </div>
   );
 }

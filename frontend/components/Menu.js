@@ -13,7 +13,7 @@ export default function Menu(props) {
 
   return (
     <div className={styles.menu}>
-      <Items />
+      {/* <Items /> */}
     </div>
   );
 }

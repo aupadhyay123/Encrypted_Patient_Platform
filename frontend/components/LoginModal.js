@@ -17,7 +17,7 @@ export default function LoginModal(props) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    const url = 'https://10f9a8053f5c.ngrok.io/login';
+    const url = 'http://cd40ad7bea40.ngrok.io/login';
     fetch(url, {
       method: "post",
       headers: {
@@ -34,6 +34,10 @@ export default function LoginModal(props) {
     })
     .then(res => {
         console.log(res);
+        if(res.status === 200) {
+          const router = useRouter();
+          router.push('/dashboard/messages');
+        }
     })
   }
 
@@ -55,7 +59,7 @@ export default function LoginModal(props) {
             type='password'
             onChange={(e) => setPassword(e.target.value)}
             value={password} />
-          <input type='submit' value='SIGN UP' className={styles.submitButton} id={styles.loginButton} />
+          <input type='submit' value='SIGN IN' className={styles.submitButton} id={styles.loginButton} />
         </form>
       </div>
       <div id={styles.loginImage} className={styles.imageContainer} />

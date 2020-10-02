@@ -7,6 +7,7 @@ import styles from './Modal.module.css';
 
 // next.js
 import Link from 'next/link';
+import useRouter from 'next/router';
 
 // react.js
 import { useState } from 'react';
@@ -53,7 +54,7 @@ export default function RegisterModal(props) {
       console.log(phone);
       console.log(password);
 
-      const url = 'https://10f9a8053f5c.ngrok.io/registration';
+      const url = 'http://cd40ad7bea40.ngrok.io/registration';
       fetch(url, {
         method: "post",
         headers: {
@@ -72,6 +73,10 @@ export default function RegisterModal(props) {
       })
       .then(res => {
           console.log(res);
+          if(res.status === 200) {
+            const router = useRouter();
+            router.push('/dashboard/messages');
+          }
       })
     }
   }
@@ -89,9 +94,6 @@ export default function RegisterModal(props) {
             type='text' 
             onChange={(e) => setName(e.target.value)}
             value={name} />
-          <p style={{margin:'0'}}>
-            {nameError}
-          </p>
           <FormInput 
             title='Email' 
             type='text' 
