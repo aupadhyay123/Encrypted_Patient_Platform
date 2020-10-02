@@ -4,6 +4,8 @@ import styles from './Content.module.css';
 // components
 import Profile from './Profile';
 import Messages from './Messages';
+import Settings from './Settings';
+import Search from './Search';
 
 export default function Content(props) {
   return (
@@ -15,10 +17,10 @@ export default function Content(props) {
         <Profile />
       }
       {props.section === 'settings' &&
-        <h1>settings</h1>
+        <Settings />
       }
       {props.section === 'search' &&
-        <h1>search</h1>
+        <Search />
       }
     </div>
   )

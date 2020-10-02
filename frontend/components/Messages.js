@@ -17,7 +17,7 @@ export default function Messages() {
     <div className={styles.container}>
       <div className={styles.list}>
         <div>
-
+          
         </div>
       </div>
       <div className={styles.message}>
