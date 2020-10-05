@@ -8,6 +8,7 @@ export default function Profile(props) {
         <img src={'/images/ProfilePic.png'} style={{width:'20%', position: 'relative', marginTop: '1%', left: '40%'}}/>
         <br></br>
         <h1 style={{position: 'relative', textAlign: 'center'}}>Hello, John Galdones</h1>
+        <p style={{textAlign: 'center'}}><h4><a href={'google.com'} style={{color: 'black'}}>12 Connections</a>   |   <a href={'google.com'} style={{color: 'black'}}>1 Pending Connection</a></h4></p>
         <br></br>
 
         <div className={styles.medicalDocs}>
