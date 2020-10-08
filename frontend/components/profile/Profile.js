@@ -1,13 +1,19 @@
 // css
 import styles from './Profile.module.css';
 
+// next.js
+import { useRouter } from 'next/router';
+
 export default function Profile(props) {
+    const router = useRouter();
+    const { user } = router.query;
+
   return (
     <div>
 
         <img src={'/images/ProfilePic.png'} style={{width:'20%', position: 'relative', marginTop: '1%', left: '40%'}}/>
         <br></br>
-        <h1 style={{position: 'relative', textAlign: 'center'}}>Hello, John Galdones</h1>
+        <h1 style={{position: 'relative', textAlign: 'center'}}>Hello, {user}</h1>
         <br></br>
 
         <div className={styles.medicalDocs}>

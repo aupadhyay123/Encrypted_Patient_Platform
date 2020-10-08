@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function Navbar(props) {
   return (
-    <div className={styles.navbar}>
+    <div className={styles.container}>
       <Link href='/'>
         <a>
           <img src={'/images/icons/home.png'} className={styles.homeIcon} />

@@ -1,16 +1,11 @@
-// css
-import styles from './MenuItem.module.css';
-
-// next imports
-import Link from 'next/link';
-
 export default function MenuItem(props) {
+  const IconStyle = {
+    width: props.size
+  }
+
   return (
-    <div className={styles.item}>
-      <Link href={'/' + props.label}>
-        <img></img>
-        <a>{props.label}</a>
-      </Link>
-    </div>
+    <a onClick={() => props.selectSection()}>
+      <img src={props.icon} style={IconStyle} />
+    </a>
   );
 }

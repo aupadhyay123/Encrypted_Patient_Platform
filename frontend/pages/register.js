@@ -5,7 +5,7 @@ import RegisterModal from "../components/modal/RegisterModal";
 
 export default function Register(props) {
   return (
-    <Layout>
+    <Layout page='register'>
       <Head>
         <title>SIGN UP</title>
       </Head>
