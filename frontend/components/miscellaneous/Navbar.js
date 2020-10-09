@@ -13,7 +13,7 @@ export default function Navbar(props) {
         </a>
       </Link>
       <Link style={{border: "1px solid black", backgroundColor: "#ad03df"}} href='/register'>
-        <a>Sign Up</a>
+        <a className={styles.signUp}>Sign Up</a>
       </Link>
     </div>
   );

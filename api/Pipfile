@@ -12,6 +12,7 @@ flask-sqlalchemy = "2.4.4"
 fusionauth-client = "*"
 python-socketio = "*"
 flask-socketio = "*"
+mysql-connector-python = "*"
 
 [requires]
 python_version = "3.8"

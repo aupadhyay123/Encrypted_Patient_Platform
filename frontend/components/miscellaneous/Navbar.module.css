@@ -15,4 +15,9 @@
 .homeIcon {
   height: 45px;
   width: 45px;
+  margin-left: 50px;
+}
+
+.signUp {
+  margin-right: 50px;
 }

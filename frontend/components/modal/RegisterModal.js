@@ -14,19 +14,30 @@ import { useState } from 'react';
 
 export default function RegisterModal(props) {
   // state
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
+  const [usernameError, setUsernameError] = useState('');
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
   const validate = () => {
-    if(!name.length) {
-      setNameError('Please put your name');
+    if(!username.length) {
+      setUsernameError('Please put your username');
+      return false;
+    }
+    if(!firstName.length) {
+      setNameError('Please put your first name');
+      return false;
+    }
+    if(!lastName.length) {
+      setNameError('Please put your last name');
       return false;
     }
     if(!email.includes('@')) {
@@ -42,10 +53,12 @@ export default function RegisterModal(props) {
       return false;
     }
 
+    console.log("validated fields");
     return true;
   }
 
   const handleSubmit = e => {
+    console.log("handle submit");
     e.preventDefault();
     const isValid = validate();
     if(isValid) {
@@ -54,18 +67,20 @@ export default function RegisterModal(props) {
       console.log(phone);
       console.log(password);
 
-      const url = 'http://cd40ad7bea40.ngrok.io/registration';
+      const url = 'http://localhost:3000/registration';
       fetch(url, {
-        method: "post",
+        method: "POST",
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          username: username,
           email: email,
           password: password,
           phone: phone,
-          name: name
+          first_name: firstName,
+          last_name: lastName
         })
       })
       .then(data => {
@@ -75,9 +90,12 @@ export default function RegisterModal(props) {
           console.log(res);
           if(res.status === 200) {
             const router = useRouter();
-            router.push('/dashboard/messages');
+            router.push('/dashboard/' + username);
           }
       })
+    }
+    else {
+      console.log("Invalid fields");
     }
   }
 
@@ -90,10 +108,20 @@ export default function RegisterModal(props) {
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
           <FormInput 
-            title='Name' 
+            title='Username' 
             type='text' 
-            onChange={(e) => setName(e.target.value)}
-            value={name} />
+            onChange={(e) => setUsername(e.target.value)}
+            value={username} />
+          <FormInput 
+            title='First Name' 
+            type='text' 
+            onChange={(e) => setFirstName(e.target.value)}
+            value={firstName} />
+          <FormInput 
+            title='Last Name' 
+            type='text' 
+            onChange={(e) => setLastName(e.target.value)}
+            value={lastName} />
           <FormInput 
             title='Email' 
             type='text' 

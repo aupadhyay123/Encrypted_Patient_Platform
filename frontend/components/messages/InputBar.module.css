@@ -1,0 +1,25 @@
+.container {
+  width: 100%;
+  background-color: rosybrown;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.files {
+  margin-left: 25px;
+}
+
+.message {
+  width: 50%;
+}
+
+.messageBar {
+  width: 100%;
+}
+
+.send {
+  margin-right: 25px;
+}
