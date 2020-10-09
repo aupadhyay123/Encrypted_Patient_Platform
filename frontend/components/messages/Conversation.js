@@ -10,7 +10,13 @@ import io from 'socket.io-client';
 // react.js
 import { useEffect } from 'react';
 
+// next.js
+import { useRouter } from 'next/router';
+
 export default function Conversation(props) {
+  const router = useRouter();
+  const { user } = router.query;
+
   var socket;
 
   useEffect(() => {
@@ -20,8 +26,11 @@ export default function Conversation(props) {
     // Message received from server
     socket.on('message_from_server', (data) => {
       console.log('server received message!');
+      var user_sender =  data['username'];
       var msg = data['text'];
-      document.getElementById('conversation').innerHTML += "Server: " + msg + "\n\n";
+      if(user != user_sender) {
+        document.getElementById('conversation').innerHTML += user_sender + ": " + msg + "\n\n";
+      }
     })
   });  
 
@@ -35,7 +44,8 @@ export default function Conversation(props) {
     // emit a message to the 'send_message' socket
     socket.emit('send_message',
     {
-      'text': msg
+      'text': msg,
+      'username': user
     });
     
     // set the text input to empty

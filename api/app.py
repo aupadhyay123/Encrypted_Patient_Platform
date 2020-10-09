@@ -3,7 +3,7 @@ from fusionauth.fusionauth_client import FusionAuthClient
 from flask_socketio import *
 from .config import Config
 #from flask_sqlalchemy import SQLAlchemy
-from flask_mysqldb import MySQL
+# from flask_mysqldb import MySQL
 import shortuuid
 
 # ...app config...
@@ -16,7 +16,7 @@ app.config['MYSQL_PASSWORD'] = 'Qaz1234mko'
 app.config['MYSQL_DB'] = 'Vaunect'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Qaz1234mko@localhost/Vaunect'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = MySQL(app)
+# db = MySQL(app)
 
 
 @app.route("/registration", methods=["POST"])
@@ -36,14 +36,14 @@ def sign_up():
                 "(user_id, username, first_name, last_name, email, phone, password)"
                 "VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
-    cursor = db.connection.cursor()
-    cursor.execute(register, new_user)
+    # cursor = db.connection.cursor()
+    # cursor.execute(register, new_user)
     
-    results = cursor.fetchall()
-    if results:
-        return jsonify(new_user), 200
-    else:
-        return jsonify(new_user), 400
+    # results = cursor.fetchall()
+    # if results:
+    #     return jsonify(new_user), 200
+    # else:
+    #     return jsonify(new_user), 400
 
 
 
@@ -52,6 +52,7 @@ def message_received(data):
     print(data['text'])
     emit('message_from_server',
     {
+        'username': data['username'],
         'text': 'Message received!'
     })
 
