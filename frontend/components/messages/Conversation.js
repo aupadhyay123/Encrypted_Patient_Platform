@@ -37,7 +37,7 @@ export default function Conversation(props) {
     {
       'text': msg
     });
-
+    
     // set the text input to empty
     document.getElementById('message').value = '';
   }

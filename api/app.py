@@ -2,45 +2,28 @@ from flask import Flask, request, jsonify, make_response, render_template, redir
 from fusionauth.fusionauth_client import FusionAuthClient
 from flask_socketio import *
 from .config import Config
-from flask_sqlalchemy import SQLAlchemy
-import mysql.connector
+#from flask_sqlalchemy import SQLAlchemy
+from flask_mysqldb import MySQL
+import shortuuid
 
 # ...app config...
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True)
 
-# #TODO move these variables to a constants.py file for easy change
-# POSTGRES = {
-#     'user': 'admin',
-#     'pw': 'admincsci401',
-#     'db': 'Vaunect_DB',
-#     'host': 'localhost',
-#     'port': '5432',
-# }
-# #provides flask with the uri to connect to the database
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
-# %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'Qaz1234mko'
+app.config['MYSQL_DB'] = 'Vaunect'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Qaz1234mko@localhost/Vaunect'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = MySQL(app)
 
-
-# db = SQLAlchemy(app) #creates an sql alchemy object to communicate with postgres db (db name: Vaunect_DB)
-
-# db.init_app(app) #ensures connection to database is secure, thus no information may be leaked
-
-config = {
-    "host": "localhost",
-    "user": "root",
-    "password": "Qaz1234mko",
-    "database": "Vaunect",
-    "port": "3306"
-}
 
 @app.route("/registration", methods=["POST"])
 def sign_up():
-    conn = mysql.connector.connect(**config)
-
     data = request.json
     new_user = {
+        "user_id": shortuuid.ShortUUID().random(length=40),
         "username": data.get('username'),
         "first_name": data.get('first_name'),
         "last_name": data.get('last_name'),
@@ -50,16 +33,19 @@ def sign_up():
     }
 
     register = ("INSERT INTO users"
-                "(username, first_name, last_name, email, phone, password)"
-                "VALUES (%s, %s, %s, %s, %s, %s)")
+                "(user_id, username, first_name, last_name, email, phone, password)"
+                "VALUES (%s, %s, %s, %s, %s, %s, %s)")
 
-    cursor = conn.cursor()
+    cursor = db.connection.cursor()
     cursor.execute(register, new_user)
+    
+    results = cursor.fetchall()
+    if results:
+        return jsonify(new_user), 200
+    else:
+        return jsonify(new_user), 400
 
-    conn.commit()
 
-    cursor.close()
-    conn.close()
 
 @socketio.on('send_message')
 def message_received(data):
