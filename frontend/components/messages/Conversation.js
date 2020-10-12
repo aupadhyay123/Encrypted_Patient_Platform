@@ -3,53 +3,77 @@ import styles from './Conversation.module.css';
 
 // components
 import InputBar from './InputBar';
+import Bubble from './Bubble';
 
 // socket.io
 import io from 'socket.io-client';
 
 // react.js
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // next.js
 import { useRouter } from 'next/router';
+
+// react-scroll
+import { animateScroll } from 'react-scroll';
+
+let endpoint = 'http://localhost:5000';
+let socket = io.connect(endpoint);
 
 export default function Conversation(props) {
   const router = useRouter();
   const { user } = router.query;
 
-  var socket;
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
 
+  const messagesEndRef = useRef(null);
+
+  // this will automatically be called when messaage length changes
   useEffect(() => {
-    socket = io.connect('http://localhost:5000');
-    // socket.on('connect', () => console.log('connected socket'));
-
-    // Message received from server
-    socket.on('message_from_server', (data) => {
-      console.log('server received message!');
-      var user_sender =  data['username'];
-      var msg = data['text'];
-      if(user != user_sender) {
-        document.getElementById('conversation').innerHTML += user_sender + ": " + msg + "\n\n";
+    getMessages();
+    scrollToBottom();
+  }, [messages.length]);
+  
+  // will call when first time app render and
+  // every time message length changes
+  const getMessages = () => {
+    socket.on('message', msg => {
+      let receivedMessage = {
+        'type': 1,
+        'text': msg
       }
-    })
-  });  
+      setMessages([...messages, receivedMessage]);
+    });
+  };
+
+  // changes state of Message as user types into conversation bar
+  const onChange = e => {
+    setMessage(e.target.value);
+  }
 
   // will need to export wrapper that handles these events
   // const handleSendMessage = (txt) => sendMessage(text);
+  const sendMessage = () => {
+    if(message !== "") {
+      let sentMessage = {
+        'type': 0,
+        'text': message
+      };
+      setMessages([...messages, sentMessage]);
+      socket.emit('message', message);
+      setMessage("");
+      console.log('Message sent!')
+    }
+    else {
+      alert("Please add a message!");
+    }
+  }
 
-  const sendMessage = (msg) => {
-    // update chat window
-    document.getElementById('conversation').innerHTML += "You: " + msg + "\n\n";
-
-    // emit a message to the 'send_message' socket
-    socket.emit('send_message',
-    {
-      'text': msg,
-      'username': user
-    });
-    
-    // set the text input to empty
-    document.getElementById('message').value = '';
+  const scrollToBottom = () => {
+    animateScroll.scrollToBottom({
+      containerId: 'conversation'
+    })
   }
 
   return (
@@ -61,8 +85,14 @@ export default function Conversation(props) {
       } */}
       {!props.selected &&
         <div className={styles.selected}>
-          <div className={styles.conversation} id='conversation' />
-          <InputBar send={(msg) => sendMessage(msg)} />
+          <div className={styles.conversation} id='conversation'>
+            {messages.map(msg => (
+              <div>
+                <Bubble type={msg['type']} text={msg['text']} />
+              </div>
+            ))}
+          </div>
+          <InputBar msg={message} send={() => sendMessage()} change={e => onChange(e)} />
         </div>
       }
     </div>
