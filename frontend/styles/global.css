@@ -19,3 +19,11 @@ input {
   font-family: "Abel", sans-serif;
   color: #9ac355;
 }
+
+#register {
+  background: linear-gradient(45deg, #9ac355, #0459A7);
+}
+
+#login {
+  background: linear-gradient(135deg, #9ac355, #0459A7);
+}

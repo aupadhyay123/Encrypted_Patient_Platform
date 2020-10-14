@@ -19,31 +19,40 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = MySQL(app)
 
 
-@app.route("/registration", methods=["POST"])
-def sign_up():
-    data = request.json
-    new_user = {
-        "user_id": shortuuid.ShortUUID().random(length=40),
-        "username": data.get('username'),
-        "first_name": data.get('first_name'),
-        "last_name": data.get('last_name'),
-        "email": data.get('email'),
-        "phone": data.get('phone'),
-        "password": data.get('password')
-    }
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        print('hello')
+        req = request.get_json()
+        print(req)
 
-    register = ("INSERT INTO users"
-                "(user_id, username, first_name, last_name, email, phone, password)"
-                "VALUES (%s, %s, %s, %s, %s, %s, %s)")
+        res = make_response(jsonify({"message": "ok"}), 400)
+        return res
+    # user_id = shortuuid.ShortUUID().random(length=40)
+    # username = req[]
 
-    cursor = db.connection.cursor()
-    cursor.execute(register, new_user)
+    # new_user = {
+    #     "user_id": shortuuid.ShortUUID().random(length=40),
+    #     "username": data.get('username'),
+    #     "first_name": data.get('first_name'),
+    #     "last_name": data.get('last_name'),
+    #     "email": data.get('email'),
+    #     "phone": data.get('phone'),
+    #     "password": data.get('password')
+    # }
+
+    # register = (f"INSERT INTO users"
+    #             + "(user_id, username, first_name, last_name, email, phone, password)"
+    #             + "VALUES ({user_id}, {username}, {first_name}, {last_name}, {email}, {phone}, {password})")
+
+    # cursor = db.connection.cursor()
+    # cursor.execute(register, new_user)
     
-    results = cursor.fetchall()
-    if results:
-        return jsonify(new_user), 200
-    else:
-        return jsonify(new_user), 400
+    # results = cursor.fetchall()
+    # if results:
+    #     return jsonify(new_user), 200
+    # else:
+    #     return jsonify(new_user), 400
 
 @socketio.on('message')
 def message_received(msg):
@@ -53,5 +62,5 @@ def message_received(msg):
 
 if __name__ == '__main__':
     app.config['DEBUG'] = True #will automatically reload server on any code change (will be useful in debugging)
-    app.run()
+    app.run(debug=True)
     socketio.run(app, port=5000, debug=True)

@@ -67,12 +67,11 @@ export default function RegisterModal(props) {
       console.log(phone);
       console.log(password);
 
-      const url = 'http://localhost:3000/registration';
+      const url = 'http://localhost:3000/register';
       fetch(url, {
         method: "POST",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'content-type': 'application/json'
         },
         body: JSON.stringify({
           username: username,
@@ -83,15 +82,20 @@ export default function RegisterModal(props) {
           last_name: lastName
         })
       })
-      .then(data => {
-        return data.json()
-      })
       .then(res => {
           console.log(res);
           if(res.status === 200) {
-            const router = useRouter();
-            router.push('/dashboard/' + username);
+            alert("Successfully logged in");
+            // const router = useRouter();
+            // router.push('/dashboard/' + username);
           }
+          else {
+            console.log("Looks like there was a problem. Status cod: " + res.status);
+            return;
+          }
+      })
+      .catch(error => {
+        console.log("Fetch error: " + error);
       })
     }
     else {
