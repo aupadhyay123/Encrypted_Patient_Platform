@@ -45,10 +45,11 @@ def register():
     password =  req.get('password')
 
 
-    register_statement = "INSERT INTO users (user_id, private_key, public_key, username, password, phone_number, email, first_name, last_name) VALUES (%s, %s, %s,%s, %s, %s,%s, %s, %s)"
-    print("youuu")
+    register_statement = "INSERT INTO users (user_id, username, first_name, last_name, email, phone, password, private_key, public_key) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    values = (user_id, username, first_name, last_name, email, phone, password, private_key, public_key)
+    print(register_statement)
     cursor = db.connection.cursor()
-    cursor.execute(register_statement, str(user_id), str(private_key), str(public_key), str(username), str(first_name), str(last_name), str(email), str(phone), str(password))
+    cursor.execute(register_statement, values)
     print("im here")
     db.connection.commit()
     return jsonify("registration:ok"), 200
