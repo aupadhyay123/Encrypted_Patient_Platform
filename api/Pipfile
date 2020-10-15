@@ -12,6 +12,9 @@ flask-sqlalchemy = "2.4.4"
 fusionauth-client = "*"
 python-socketio = "*"
 flask-socketio = "*"
+flask-mysqldb = "*"
+mysqlclient = "*"
+shortuuid = "*"
 
 [requires]
 python_version = "3.8"

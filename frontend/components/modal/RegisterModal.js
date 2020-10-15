@@ -7,25 +7,37 @@ import styles from './Modal.module.css';
 
 // next.js
 import Link from 'next/link';
+import useRouter from 'next/router';
 
 // react.js
 import { useState } from 'react';
 
 export default function RegisterModal(props) {
   // state
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
+  const [usernameError, setUsernameError] = useState('');
   const [nameError, setNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
   const validate = () => {
-    if(!name.length) {
-      setNameError('Please put your name');
+    if(!username.length) {
+      setUsernameError('Please put your username');
+      return false;
+    }
+    if(!firstName.length) {
+      setNameError('Please put your first name');
+      return false;
+    }
+    if(!lastName.length) {
+      setNameError('Please put your last name');
       return false;
     }
     if(!email.includes('@')) {
@@ -41,10 +53,12 @@ export default function RegisterModal(props) {
       return false;
     }
 
+    console.log("validated fields");
     return true;
   }
 
   const handleSubmit = e => {
+    console.log("handle submit");
     e.preventDefault();
     const isValid = validate();
     if(isValid) {
@@ -53,26 +67,39 @@ export default function RegisterModal(props) {
       console.log(phone);
       console.log(password);
 
-      const url = 'https://10f9a8053f5c.ngrok.io/registration';
+      const url = 'http://localhost:3000/register';
       fetch(url, {
-        method: "post",
+        method: "POST",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'content-type': 'application/json'
         },
         body: JSON.stringify({
+          username: username,
           email: email,
           password: password,
           phone: phone,
-          name: name
+          first_name: firstName,
+          last_name: lastName
         })
-      })
-      .then(data => {
-        return data.json()
       })
       .then(res => {
           console.log(res);
+          if(res.status === 200) {
+            alert("Successfully logged in");
+            // const router = useRouter();
+            // router.push('/dashboard/' + username);
+          }
+          else {
+            console.log("Looks like there was a problem. Status cod: " + res.status);
+            return;
+          }
       })
+      .catch(error => {
+        console.log("Fetch error: " + error);
+      })
+    }
+    else {
+      console.log("Invalid fields");
     }
   }
 
@@ -85,13 +112,20 @@ export default function RegisterModal(props) {
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
           <FormInput 
-            title='Name' 
+            title='Username' 
             type='text' 
-            onChange={(e) => setName(e.target.value)}
-            value={name} />
-          <p style={{margin:'0'}}>
-            {nameError}
-          </p>
+            onChange={(e) => setUsername(e.target.value)}
+            value={username} />
+          <FormInput 
+            title='First Name' 
+            type='text' 
+            onChange={(e) => setFirstName(e.target.value)}
+            value={firstName} />
+          <FormInput 
+            title='Last Name' 
+            type='text' 
+            onChange={(e) => setLastName(e.target.value)}
+            value={lastName} />
           <FormInput 
             title='Email' 
             type='text' 

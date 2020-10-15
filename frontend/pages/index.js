@@ -3,9 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 // components
-import Navbar from '../components/Navbar';
-import Layout from '../components/Layout';
-import Modal from '../components/Modal';
+import Navbar from '../components/miscellaneous/Navbar';
 
 export default function Landing() {
   return (

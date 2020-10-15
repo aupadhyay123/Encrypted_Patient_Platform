@@ -1,7 +1,9 @@
 import styles from './FormInput.module.css';
 
 const placeholders = {
-  'Name': 'Bob Smith',
+  'Username': 'bobsmith',
+  'First Name': 'Bob',
+  'Last Name': 'Smith',
   'Phone': '123-456-7890',
   'Email': 'bob@gmail.com',
   'Password': 'At least 8 characters'
