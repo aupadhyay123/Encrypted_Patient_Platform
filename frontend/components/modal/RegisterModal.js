@@ -67,7 +67,7 @@ export default function RegisterModal(props) {
       console.log(phone);
       console.log(password);
 
-      const url = 'http://localhost:3000/register';
+      const url = 'http://localhost:5000/register';
       fetch(url, {
         method: "POST",
         headers: {
