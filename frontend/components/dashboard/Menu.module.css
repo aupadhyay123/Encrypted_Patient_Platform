@@ -1,0 +1,29 @@
+.container {
+  width: 75px;
+  height: 100%;
+  background-color: #9AC355;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  position: fixed;
+}
+
+.container a {
+    text-decoration: none;
+    color: black;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    width: 100%;
+    text-align: center;
+    
+}
+
+.container a:hover {
+  background-color: #9AD355;
+  cursor: pointer;
+}
+
+.container a:active  {
+  background-color: #9AC355;
+}
