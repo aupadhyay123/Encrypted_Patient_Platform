@@ -7,12 +7,14 @@ import styles from './Modal.module.css';
 
 // next.js
 import Link from 'next/link';
-import useRouter from 'next/router';
+import {useRouter} from 'next/router';
 
 // react.js
 import { useState } from 'react';
 
 export default function RegisterModal(props) {
+  const router = useRouter();
+
   // state
   const [username, setUsername] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -85,12 +87,11 @@ export default function RegisterModal(props) {
       .then(res => {
           console.log(res);
           if(res.status === 200) {
-            alert("Successfully logged in");
-            // const router = useRouter();
-            // router.push('/dashboard/' + username);
+            alert("Successfully registered user");
+            router.push('/dashboard/' + username);
           }
           else {
-            console.log("Looks like there was a problem. Status cod: " + res.status);
+            console.log("Looks like there was a problem. Status code: " + res.status);
             return;
           }
       })

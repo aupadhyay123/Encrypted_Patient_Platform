@@ -28,10 +28,10 @@ def message_received(msg):
 @app.route("/register", methods=["POST"])
 @cross_origin()
 def register():
-    print('hello')
+    print("attemptint to register user")
     req = request.get_json()
     print(req)
-    #res = make_response(jsonify({"message": "ok"}), 400)
+
     user_id = shortuuid.ShortUUID().random(length=40)
     print(user_id)
     user_id = shortuuid.ShortUUID().random(length=40)
@@ -44,15 +44,34 @@ def register():
     phone = req.get('phone')
     password =  req.get('password')
 
-
-    register_statement = "INSERT INTO users (user_id, username, first_name, last_name, email, phone, password, private_key, public_key) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    register_statement = """INSERT INTO users (user_id, username, first_name, last_name, email, phone, 
+                            password, private_key, public_key) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
     values = (user_id, username, first_name, last_name, email, phone, password, private_key, public_key)
-    print(register_statement)
+    print(register_statement, values)
     cursor = db.connection.cursor()
     cursor.execute(register_statement, values)
-    print("im here")
     db.connection.commit()
-    return jsonify("registration:ok"), 200
+    return jsonify("registration:success"), 200
+
+
+@app.route("/login", methods=["POST"])
+@cross_origin()
+def login():
+    print("attempting user login")
+    req = request.get_json()
+    print(req)
+
+    username = req.get('username')
+    password = req.get('password')
+
+    login_statement = "SELECT user_id FROM users WHERE username=%s AND password=%s;"
+    values = (username, password)
+    print(login_statement, values)
+
+    cursor = db.connection.cursor()
+    cursor.execute(login_statement, values)
+    db.connection.commit()
+    return jsonify("login:success"), 200
 
 
 if __name__ == '__main__':
