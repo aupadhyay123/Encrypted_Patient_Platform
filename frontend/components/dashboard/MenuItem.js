@@ -4,7 +4,7 @@ export default function MenuItem(props) {
   }
 
   return (
-    <a onClick={() => props.selectSection()}>
+    <a>
       <img src={props.icon} style={IconStyle} />
     </a>
   );

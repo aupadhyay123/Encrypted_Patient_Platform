@@ -7,7 +7,10 @@ import Messages from '../messages/Messages';
 import Settings from '../settings/Settings';
 import Search from '../search/Search';
 
-export default function Content(props) {
+// redux
+import { connect } from 'react-redux';
+
+function Content(props) {
   return (
     <div className={styles.content}>
       {props.section === 'messages' &&
@@ -22,6 +25,13 @@ export default function Content(props) {
       {props.section === 'search' &&
         <Search />
       }
+      <h1>{props.section}</h1>
     </div>
   )
 }
+
+const mapStateToProps = (state) => ({
+  section: state.section
+});
+
+export default connect(mapStateToProps)(Content);
