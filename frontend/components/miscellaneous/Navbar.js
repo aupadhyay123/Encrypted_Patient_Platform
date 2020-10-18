@@ -15,6 +15,9 @@ export default function Navbar(props) {
       <Link style={{border: "1px solid black", backgroundColor: "#ad03df"}} href='/register'>
         <a className={styles.signUp}>Sign Up</a>
       </Link>
+      <Link style={{border: "1px solid black", backgroundColor: "#ad03df"}} href='/login'>
+        <a className={styles.login}>Login</a>
+      </Link>
     </div>
   );
 }
