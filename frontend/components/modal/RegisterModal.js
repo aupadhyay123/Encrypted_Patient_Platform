@@ -9,6 +9,8 @@ import styles from './Modal.module.css';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 
+import {generate_key_pair} from '../../encryption/Encryption.js';
+
 // react.js
 import { useState } from 'react';
 
@@ -73,6 +75,8 @@ function RegisterModal(props) {
       console.log(phone);
       console.log(password);
 
+      var key_array = generate_key_pair();
+      console.log(key_array);
       const url = 'http://localhost:5000/register';
       fetch(url, {
         method: "POST",
@@ -85,7 +89,9 @@ function RegisterModal(props) {
           password: password,
           phone: phone,
           first_name: firstName,
-          last_name: lastName
+          last_name: lastName,
+          public_key: key_array['public_key'],
+          private_key: key_array['private_key']
         })
       })
       .then(res => {
