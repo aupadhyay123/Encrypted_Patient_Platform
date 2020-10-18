@@ -34,10 +34,10 @@ def message_received(msg):
 @cross_origin()
 def register():
     req = request.get_json()
+    print(req)
     user_id = shortuuid.ShortUUID().random(length=40)
-    user_id = shortuuid.ShortUUID().random(length=40)
-    private_key = '1234522242'
-    public_key = '1232414141'
+    private_key = req.get('private_key')
+    public_key = req.get('public_key')
     username = req.get('username')
     first_name = req.get('first_name')
     last_name =  req.get('last_name')
@@ -51,7 +51,6 @@ def register():
     results = cursor.fetchall()
 
     if len(results) == 0:
-
         byte_version = bytes(first_name, 'utf-8')
         first_name = encrypt_key.encrypt(byte_version)
 
