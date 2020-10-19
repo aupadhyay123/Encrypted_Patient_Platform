@@ -25,13 +25,12 @@ function Content(props) {
       {props.section === 'search' &&
         <Search />
       }
-      <h1>{props.section}</h1>
     </div>
   )
 }
 
 const mapStateToProps = (state) => ({
-  section: state.section
+  section: state.section.section
 });
 
 export default connect(mapStateToProps)(Content);

@@ -12,7 +12,11 @@ import {useRouter} from 'next/router';
 // react.js
 import { useState } from 'react';
 
-export default function RegisterModal(props) {
+// redux
+import { connect } from 'react-redux';
+import { login } from '../../actions/login';
+
+function RegisterModal(props) {
   const router = useRouter();
 
   // state
@@ -87,7 +91,7 @@ export default function RegisterModal(props) {
       .then(res => {
           console.log(res);
           if(res.status === 200) {
-            alert("Successfully registered user");
+            props.loginUser(username);
             router.push('/dashboard/' + username);
           }
           else {
@@ -149,3 +153,9 @@ export default function RegisterModal(props) {
     </Modal>
   );
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  loginUser: (user) => dispatch(login(user))
+})
+
+export default connect(null, mapDispatchToProps)(RegisterModal);

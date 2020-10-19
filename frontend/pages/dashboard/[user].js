@@ -6,7 +6,23 @@ import Layout from '../../components/miscellaneous/Layout';
 import Menu from '../../components/dashboard/Menu';
 import Content from '../../components/dashboard/Content';
 
-export default function User(props) {
+// redux
+import { connect } from 'react-redux';
+
+// react
+import { useEffect } from 'react';
+import { useRouter } from "next/router";
+
+function User(props) {
+  const router = useRouter();
+
+  console.log('user: ' + props.user);
+  useEffect(() => {
+    if(!props.user) {
+      router.push('/login');
+    }
+  });
+
   return (
     <Layout>
       <Head>
@@ -17,3 +33,9 @@ export default function User(props) {
     </Layout>
   );
 }
+
+const mapStateToProps = (state) => ({
+  user: state.login.user
+});
+
+export default connect(mapStateToProps)(User);

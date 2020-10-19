@@ -12,7 +12,11 @@ import {useRouter} from 'next/router';
 // react.js
 import { useState } from 'react';
 
-export default function LoginModal(props) {
+// redux
+import { connect } from 'react-redux';
+import { login } from '../../actions/login';
+
+function LoginModal(props) {
   const router = useRouter();
 
   const [username, setUsername] = useState('');
@@ -35,7 +39,7 @@ export default function LoginModal(props) {
     .then(res => {
       console.log(res);
       if(res.status === 200) {
-        console.log('going to dashboard');
+        props.loginUser(username);
         router.push('/dashboard/' + username);
       }
       else {
@@ -73,3 +77,9 @@ export default function LoginModal(props) {
     </Modal>
   );
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  loginUser: (user) => dispatch(login(user))
+})
+
+export default connect(null, mapDispatchToProps)(LoginModal);

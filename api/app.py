@@ -30,10 +30,8 @@ def message_received(msg):
 def register():
     print("attemptint to register user")
     req = request.get_json()
-    print(req)
 
     user_id = shortuuid.ShortUUID().random(length=40)
-    print(user_id)
     user_id = shortuuid.ShortUUID().random(length=40)
     private_key = '1234522242'
     public_key = '1232414141'
@@ -47,10 +45,11 @@ def register():
     register_statement = """INSERT INTO users (user_id, username, first_name, last_name, email, phone, 
                             password, private_key, public_key) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
     values = (user_id, username, first_name, last_name, email, phone, password, private_key, public_key)
-    print(register_statement, values)
+
     cursor = db.connection.cursor()
     cursor.execute(register_statement, values)
     db.connection.commit()
+
     return jsonify("registration:success"), 200
 
 
@@ -59,19 +58,84 @@ def register():
 def login():
     print("attempting user login")
     req = request.get_json()
-    print(req)
 
     username = req.get('username')
     password = req.get('password')
 
     login_statement = "SELECT user_id FROM users WHERE username=%s AND password=%s;"
     values = (username, password)
-    print(login_statement, values)
 
     cursor = db.connection.cursor()
     cursor.execute(login_statement, values)
-    db.connection.commit()
+
     return jsonify("login:success"), 200
+
+
+@app.route("/search", methods=["POST"])
+@cross_origin()
+def search():
+    print("Attempting to search for user")
+    req = request.get_json()
+
+    query = req.get('query')
+    user = req.get('user')
+
+    search_statement = f"""SELECT username, first_name, last_name FROM users 
+                            WHERE (username LIKE \"%{query}%\" 
+                            OR CONCAT_WS(\" \", first_name, last_name) LIKE \"%{query}%\")
+                            AND username != \"{user}\";"""
+
+    cursor = db.connection.cursor()
+    cursor.execute(search_statement)
+    results = cursor.fetchall()
+    print(results)
+
+    results_list = []
+    for i in results:
+        user = {}
+        user['username'] = i[0]
+        user['first_name'] = i[1]
+        user['last_name'] = i[2]
+        results_list.append(user)
+
+    return jsonify({'success':'ok','results':results_list}), 200
+
+
+@app.route('/user', methods=['POST'])
+@cross_origin()
+def get_user():
+    print('retrieving user information')
+    req = request.get_json()
+
+    user_id = req.get('user_id')
+    user_statement = f"SELECT username, first_name, last_name FROM users WHERE user_id={user_id}"
+
+    cursor = db.connection.cursor()
+    cursor.execute(user_statement)
+    results = cursor.fetchall()
+    print(results)
+
+    if len(results) == 1:
+        return jsonify({"success":"ok"}), 200
+
+
+@app.route('/friend-request', methods=['POST', 'DELETE'])
+@cross_origin()
+def friend_request():
+    if request.method == 'POST':
+        req = request.get_json()
+
+        sender = req.get('sender')
+        receiver = req.get('receiver')
+        friend_request_statement = f"INSERT INTO friend_requests (sender_id, receiver_id) VALUES (\"{sender}\", \"{receiver}\");"
+
+        cursor = db.connection.cursor()
+        cursor.execute(friend_request_statement)
+        db.connection.commit()
+
+        return jsonify({'friend_request': 'ok'}), 200
+    elif request.method == 'DELETE':
+        pass
 
 
 if __name__ == '__main__':
