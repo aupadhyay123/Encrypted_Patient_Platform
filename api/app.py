@@ -38,6 +38,7 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, app.config['SECRET-KEY'])
+            print(data)
         except:
             return jsonify({'message': 'Token is invalid'}), 403
 
@@ -68,7 +69,7 @@ def message_received(msg):
 def register():
     req = request.get_json()
     print(req)
->>>>>>> generates public and private key
+
     user_id = shortuuid.ShortUUID().random(length=40)
     private_key = req.get('private_key')
     public_key = req.get('public_key')
@@ -127,16 +128,12 @@ def login():
     if len(results) == 1:
         password_check = encrypt_key.decrypt(bytes(results[0][6], 'utf-8')).decode('utf-8')
         if(password_check == password):
-<<<<<<< HEAD
-                token = jwt.encode({
-                    'user': username,
-                    'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-                     }, app.config['SECRET-KEY'])
+            token = jwt.encode({
+                'user': username,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+            }, app.config['SECRET-KEY'])
                 
-            return jsonify(user_id=results[0][0],login=True, "token": token.decode('UTF-8')), 200
-=======
-            return jsonify(user_id=results[0][0],key0=results[0][7], key1=results[0][8],login=True), 200
->>>>>>> updates
+            return jsonify(user_id=results[0][0],login=True, token=token.decode('UTF-8')), 200
         else:
             return jsonify(login=False),400
     return jsonify(login=False), 400

@@ -38,17 +38,10 @@ function LoginModal(props) {
     })
     .then(res => {
       console.log(res);
-<<<<<<< HEAD
-      if(res.status === 200) {
-        props.loginUser(username);
-        router.push('/dashboard/' + username);
-        // return res.json()
-=======
       if(res.status === 200){
         console.log('going to dashboard');
         router.push('/dashboard/' + username);
-        return res.json();
->>>>>>> updates
+        // return res.json();
       }
       else {
         console.log("Looks like there was a problem. Status code: " + res.status);
@@ -56,12 +49,8 @@ function LoginModal(props) {
       }
     })
     .then(data => {
-<<<<<<< HEAD
-
-=======
         sessionStorage.setItem('0_key', data['key0']);
         sessionStorage.setItem('1_key', data['key1']);
->>>>>>> updates
     })
     .catch(error => {
       console.log("Fetch error: " + error);
