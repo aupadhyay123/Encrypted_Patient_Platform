@@ -6,6 +6,9 @@ from .config import Config
 from flask_mysqldb import MySQL
 from flask_cors import CORS,cross_origin
 import shortuuid
+import jwt
+import datetime
+from functools import wraps
 # ...app config...
 app = Flask(__name__)
 CORS(app)
@@ -15,8 +18,38 @@ app.config['MYSQL_PASSWORD'] = "Qaz1234mko"
 app.config['MYSQL_DB'] = "Vaunect"
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['CORS_HEADERS'] = "Content-Type"
+app.config['SECRET-KEY'] = 'thisisthesecretkey'
 
 db = MySQL(app)
+
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.args.get('token') #https:localhost:5000/route?token=afj203qfw0aef
+
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 403
+
+        try:
+            data = jwt.decode(token, app.config['SECRET-KEY'])
+        except:
+            return jsonify({'message': 'Token is invalid'}), 403
+
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+@app.route('/unprotected')
+def unprotected():
+    return jsonify({'message': 'Anyone can view this!'})
+
+
+@app.route('/protected')
+@token_required
+def protected():
+    return jsonify({'message': 'This is only available for people with valid tokens.'})
 
 
 @socketio.on('message')
@@ -68,7 +101,12 @@ def login():
     cursor = db.connection.cursor()
     cursor.execute(login_statement, values)
 
-    return jsonify("login:success"), 200
+    token = jwt.encode({
+        'user': username,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+    }, app.config['SECRET-KEY'])
+
+    return jsonify({"token": token.decode('UTF-8')}), 200
 
 
 @app.route("/search", methods=["POST"])
@@ -119,6 +157,27 @@ def get_user():
         return jsonify({"success":"ok"}), 200
 
 
+@app.route('/friends?', methods=['GET', 'POST', 'DELETE'])
+@cross_origin()
+def friends():
+    if request.method == 'GET':
+        req = request.get_json()
+
+        user = req.get('user')
+        friends_statement = f"SELECT username FROM users WHERE user1={user} OR user2={user};"
+
+        cursor = db.connection.cursor()
+        cursor.execute(friends_statement)
+        results = cursor.fetchall()
+        print(results)
+
+        return jsonify({
+            'success': 'ok',
+            'friends': results,
+        }), 200
+
+
+# TODO
 @app.route('/friend-request', methods=['POST', 'DELETE'])
 @cross_origin()
 def friend_request():

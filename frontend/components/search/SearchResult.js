@@ -31,7 +31,7 @@ export default function SearchResult(props) {
   return (
     <div className={styles.container}>
       <div className={styles.info}>
-        <h1>{props.name}</h1>
+        <h1>{props.firstName + ' ' + props.lastName}</h1>
         <h3>{'@' + props.username}</h3>
       </div>
       <div className={styles.add} onClick={handleFriendRequest}>

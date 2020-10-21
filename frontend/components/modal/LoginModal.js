@@ -41,11 +41,15 @@ function LoginModal(props) {
       if(res.status === 200) {
         props.loginUser(username);
         router.push('/dashboard/' + username);
+        // return res.json()
       }
       else {
         console.log("Looks like there was a problem. Status code: " + res.status);
         return;
       }
+    })
+    .then(data => {
+
     })
     .catch(error => {
       console.log("Fetch error: " + error);

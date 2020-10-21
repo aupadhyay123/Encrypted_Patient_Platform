@@ -16,6 +16,7 @@ flask-mysqldb = "*"
 mysqlclient = "*"
 shortuuid = "*"
 flask-cors = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.8"

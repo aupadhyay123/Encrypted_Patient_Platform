@@ -7,17 +7,54 @@ import { useRouter } from 'next/router';
 // react.js
 import { useEffect } from 'react';
 
+// redux
+import { connect } from 'react-redux';
+
 function Profile(props) {
+  useEffect(() => {
+    const url = 'http:localhost:5000/dashboard/';
+
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+      },
+      // body: JSON.stringify({
+      //   user: props.user,
+      // }),
+    })
+    .then(res => {
+      console.log(res);
+    })
+  });
+
   return (
     <div className={styles.container}>
-      <div>
+      <div className={styles.userInfo}>
+        <div className={styles.profilePic}>
+          <img src={'/images/ProfilePic.png'} />
+        </div>
+        <div className={styles.info}>
+          <h1>{'@' + props.user}</h1>
+        </div>
+      </div>
+      <div className={styles.connections}>
+        <div className={styles.friends}>
 
+        </div>
+        <div className={styles.friendRequests}>
+
+        </div>
       </div>
     </div>
   );
 }
 
-export default Profile;
+const mapStateToProps = (state) => ({
+  user: state.login.user,
+});
+
+export default connect(mapStateToProps)(Profile);
 
 // export default function Profile(props) {
 //     const router = useRouter();

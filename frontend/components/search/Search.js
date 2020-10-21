@@ -47,7 +47,7 @@ function Search(props) {
   }, [props.friendQuery]);
 
   const Results = props.friendResults.map(user => (
-    <SearchResult username={user['username']} name={user['first_name'] + ' ' + user['last_name']} />
+    <SearchResult key={user['username']} username={user['username']} firstName={user['first_name']} lastName={user['last_name']} />
   ));
 
   return (
