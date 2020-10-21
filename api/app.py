@@ -6,13 +6,10 @@ from .config import Config
 from flask_mysqldb import MySQL
 from flask_cors import CORS,cross_origin
 import shortuuid
-<<<<<<< HEAD
 import jwt
 import datetime
 from functools import wraps
-=======
 from cryptography.fernet import Fernet
->>>>>>> 4949675ea3e420014865b9fbcbea06e76c4f135b
 # ...app config...
 app = Flask(__name__)
 CORS(app)
@@ -70,32 +67,17 @@ def message_received(msg):
 @cross_origin()
 def register():
     req = request.get_json()
-<<<<<<< HEAD
-
-=======
->>>>>>> 4949675ea3e420014865b9fbcbea06e76c4f135b
+    print(req)
+>>>>>>> generates public and private key
     user_id = shortuuid.ShortUUID().random(length=40)
-    user_id = shortuuid.ShortUUID().random(length=40)
-    private_key = '1234522242'
-    public_key = '1232414141'
+    private_key = req.get('private_key')
+    public_key = req.get('public_key')
     username = req.get('username')
     first_name = req.get('first_name')
     last_name =  req.get('last_name')
     email =  req.get('email')
     phone = req.get('phone')
     password =  req.get('password')
-<<<<<<< HEAD
-
-    register_statement = """INSERT INTO users (user_id, username, first_name, last_name, email, phone, 
-                            password, private_key, public_key) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-    values = (user_id, username, first_name, last_name, email, phone, password, private_key, public_key)
-
-    cursor = db.connection.cursor()
-    cursor.execute(register_statement, values)
-    db.connection.commit()
-
-    return jsonify("registration:success"), 200
-=======
     cursor = db.connection.cursor()
     check_if_unique_user = '''SELECT * FROM users where username = %s or email = %s'''
     values = (username, email)
@@ -103,7 +85,6 @@ def register():
     results = cursor.fetchall()
 
     if len(results) == 0:
-
         byte_version = bytes(first_name, 'utf-8')
         first_name = encrypt_key.encrypt(byte_version)
 
@@ -127,7 +108,6 @@ def register():
         return jsonify("registration:valid"), 200
     else:
         return jsonify("email or username is already being used"), 400
->>>>>>> 4949675ea3e420014865b9fbcbea06e76c4f135b
 
 
 @app.route("/login", methods=["POST"])
@@ -138,20 +118,28 @@ def login():
     username = str(req.get('username'))
     password = req.get('password')
 
-<<<<<<< HEAD
-    login_statement = "SELECT user_id FROM users WHERE username=%s AND password=%s;"
-    values = (username, password)
+    login_statement = "SELECT * FROM users WHERE username= %s"
 
     cursor = db.connection.cursor()
-    cursor.execute(login_statement, values)
+    cursor.execute(login_statement, [username])
+    results = cursor.fetchall()
 
-    token = jwt.encode({
-        'user': username,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-    }, app.config['SECRET-KEY'])
-
-    return jsonify({"token": token.decode('UTF-8')}), 200
-
+    if len(results) == 1:
+        password_check = encrypt_key.decrypt(bytes(results[0][6], 'utf-8')).decode('utf-8')
+        if(password_check == password):
+<<<<<<< HEAD
+                token = jwt.encode({
+                    'user': username,
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                     }, app.config['SECRET-KEY'])
+                
+            return jsonify(user_id=results[0][0],login=True, "token": token.decode('UTF-8')), 200
+=======
+            return jsonify(user_id=results[0][0],key0=results[0][7], key1=results[0][8],login=True), 200
+>>>>>>> updates
+        else:
+            return jsonify(login=False),400
+    return jsonify(login=False), 400
 
 @app.route("/search", methods=["POST"])
 @cross_origin()
@@ -239,22 +227,6 @@ def friend_request():
         return jsonify({'friend_request': 'ok'}), 200
     elif request.method == 'DELETE':
         pass
-=======
-    login_statement = "SELECT * FROM users WHERE username= %s"
-
-    cursor = db.connection.cursor()
-    cursor.execute(login_statement, [username])
-    results = cursor.fetchall()
-
-    if len(results) == 1:
-        password_check = encrypt_key.decrypt(bytes(results[0][6], 'utf-8')).decode('utf-8')
-        if(password_check == password):
-            return jsonify(user_id=results[0][0],login=True), 200
-        else:
-            return jsonify(login=False),400
-    return jsonify(login=False), 400
->>>>>>> 4949675ea3e420014865b9fbcbea06e76c4f135b
-
 
 if __name__ == '__main__':
     app.config['DEBUG'] = True #will automatically reload server on any code change (will be useful in debugging)
