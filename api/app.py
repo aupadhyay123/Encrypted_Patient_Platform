@@ -127,12 +127,16 @@ def login():
     if len(results) == 1:
         password_check = encrypt_key.decrypt(bytes(results[0][6], 'utf-8')).decode('utf-8')
         if(password_check == password):
+<<<<<<< HEAD
                 token = jwt.encode({
                     'user': username,
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
                      }, app.config['SECRET-KEY'])
                 
             return jsonify(user_id=results[0][0],login=True, "token": token.decode('UTF-8')), 200
+=======
+            return jsonify(user_id=results[0][0],key0=results[0][7], key1=results[0][8],login=True), 200
+>>>>>>> updates
         else:
             return jsonify(login=False),400
     return jsonify(login=False), 400
