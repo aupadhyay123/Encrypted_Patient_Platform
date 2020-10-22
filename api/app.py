@@ -38,6 +38,7 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, app.config['SECRET-KEY'])
+            print(data)
         except:
             return jsonify({'message': 'Token is invalid'}), 403
 
@@ -129,7 +130,7 @@ def login():
             token = jwt.encode({
                 'user': username,
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-                 }, app.config['SECRET-KEY'])
+            }, app.config['SECRET-KEY'])
                 
             return jsonify(user_id=results[0][0],login=True, token=token.decode('UTF-8')), 200
         else:

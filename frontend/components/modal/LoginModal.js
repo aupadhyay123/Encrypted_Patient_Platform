@@ -38,10 +38,10 @@ function LoginModal(props) {
     })
     .then(res => {
       console.log(res);
-      if(res.status === 200) {
-        props.loginUser(username);
+      if(res.status === 200){
+        console.log('going to dashboard');
         router.push('/dashboard/' + username);
-        // return res.json()
+        // return res.json();
       }
       else {
         console.log("Looks like there was a problem. Status code: " + res.status);
