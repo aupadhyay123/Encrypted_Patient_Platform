@@ -6,6 +6,9 @@ from .config import Config
 from flask_mysqldb import MySQL
 from flask_cors import CORS, cross_origin
 import shortuuid
+import jwt
+import datetime
+from functools import wraps
 from cryptography.fernet import Fernet
 
 # ...app config...
@@ -17,6 +20,9 @@ app.config['MYSQL_PASSWORD'] = 'ea1o1gam'
 app.config['MYSQL_DB'] = 'vaunect'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['CORS_HEADERS'] = "Content-Type"
+
+app.config['SECRET-KEY'] = 'thisisthesecretkey'
+
 db = MySQL(app)
 from .conversations import conversation_blueprint
 app.register_blueprint(conversation_blueprint)
@@ -26,6 +32,35 @@ app.register_blueprint(conversation_blueprint)
 f = open("secret_key.key", "r")
 key = f.readline()
 encrypt_key = Fernet(key)
+
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.args.get('token') #https:localhost:5000/route?token=afj203qfw0aef
+
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 403
+
+        try:
+            data = jwt.decode(token, app.config['SECRET-KEY'])
+        except:
+            return jsonify({'message': 'Token is invalid'}), 403
+
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+@app.route('/unprotected')
+def unprotected():
+    return jsonify({'message': 'Anyone can view this!'})
+
+
+@app.route('/protected')
+@token_required
+def protected():
+    return jsonify({'message': 'This is only available for people with valid tokens.'})
 
 
 @socketio.on('message')
@@ -95,15 +130,106 @@ def login():
     cursor = db.connection.cursor()
     cursor.execute(login_statement, [username])
     results = cursor.fetchall()
-
     if len(results) == 1:
         password_check = encrypt_key.decrypt(bytes(results[0][6], 'utf-8')).decode('utf-8')
         if(password_check == password):
-            return jsonify(user_id=results[0][0],key0=results[0][7], key1=results[0][8],login=True), 200
+            token = jwt.encode({
+                'user': username,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                    }, app.config['SECRET-KEY'])
+                
+            return jsonify(user_id=results[0][0],login=True, token=token.decode('UTF-8')), 200
+
         else:
             return jsonify(login=False), 400
     return jsonify(login=False), 400
 
+@app.route("/search", methods=["POST"])
+@cross_origin()
+def search():
+    print("Attempting to search for user")
+    req = request.get_json()
+
+    query = req.get('query')
+    user = req.get('user')
+
+    search_statement = f"""SELECT username, first_name, last_name FROM users 
+                            WHERE (username LIKE \"%{query}%\" 
+                            OR CONCAT_WS(\" \", first_name, last_name) LIKE \"%{query}%\")
+                            AND username != \"{user}\";"""
+
+    cursor = db.connection.cursor()
+    cursor.execute(search_statement)
+    results = cursor.fetchall()
+    print(results)
+
+    results_list = []
+    for i in results:
+        user = {}
+        user['username'] = i[0]
+        user['first_name'] = i[1]
+        user['last_name'] = i[2]
+        results_list.append(user)
+
+    return jsonify({'success':'ok','results':results_list}), 200
+
+
+@app.route('/user', methods=['POST'])
+@cross_origin()
+def get_user():
+    print('retrieving user information')
+    req = request.get_json()
+
+    user_id = req.get('user_id')
+    user_statement = f"SELECT username, first_name, last_name FROM users WHERE user_id={user_id}"
+
+    cursor = db.connection.cursor()
+    cursor.execute(user_statement)
+    results = cursor.fetchall()
+    print(results)
+
+    if len(results) == 1:
+        return jsonify({"success":"ok"}), 200
+
+
+@app.route('/friends?', methods=['GET', 'POST', 'DELETE'])
+@cross_origin()
+def friends():
+    if request.method == 'GET':
+        req = request.get_json()
+
+        user = req.get('user')
+        friends_statement = f"SELECT username FROM users WHERE user1={user} OR user2={user};"
+
+        cursor = db.connection.cursor()
+        cursor.execute(friends_statement)
+        results = cursor.fetchall()
+        print(results)
+
+        return jsonify({
+            'success': 'ok',
+            'friends': results,
+        }), 200
+
+
+# TODO
+@app.route('/friend-request', methods=['POST', 'DELETE'])
+@cross_origin()
+def friend_request():
+    if request.method == 'POST':
+        req = request.get_json()
+
+        sender = req.get('sender')
+        receiver = req.get('receiver')
+        friend_request_statement = f"INSERT INTO friend_requests (sender_id, receiver_id) VALUES (\"{sender}\", \"{receiver}\");"
+
+        cursor = db.connection.cursor()
+        cursor.execute(friend_request_statement)
+        db.connection.commit()
+
+        return jsonify({'friend_request': 'ok'}), 200
+    elif request.method == 'DELETE':
+        pass
 
 if __name__ == '__main__':
     app.config['DEBUG'] = True #will automatically reload server on any code change (will be useful in debugging)

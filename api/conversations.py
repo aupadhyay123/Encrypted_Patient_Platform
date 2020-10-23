@@ -5,10 +5,11 @@ from .app import db
 conversation_blueprint = Blueprint('conversations', __name__)
 conversation_dao = ConversationDAO()
 
-@conversation_blueprint.route('/conversation/exists', methods=['GET'])
+@conversation_blueprint.route('/conversation/exists', methods=['POST'])
 @cross_origin()
 def does_conversation_exist():
     data = request.json
+    print(data)
     user1 = data['user1']
     user2 = data['user2']
     if conversation_dao.does_conversation_exist(db, user1, user2):
@@ -23,11 +24,14 @@ def create_conversation():
     user1 = data['user1']
     user2 = data['user2']
     secret_key = data['secret_key']
-    nonce = data['nonce']
-    create_response = conversation_dao.create_conversation(db, user1, user2, secret_key, nonce)
+    key = []
+    for s in secret_key:
+        key.append(secret_key[s])
+    str_key = ','.join(str(x) for x in key)
+    create_response = conversation_dao.create_conversation(db, user1, user2, str_key)
     return create_response, create_response['status']
 
-@conversation_blueprint.route('/conversation', methods=['GET'])
+@conversation_blueprint.route('/conversation/retrieve', methods=['POST'])
 @cross_origin()
 def get_conversation():
     data = request.json

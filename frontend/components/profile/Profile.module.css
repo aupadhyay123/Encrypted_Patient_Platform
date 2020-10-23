@@ -1,4 +1,29 @@
-.medicalDocs {
+.container {
+    min-height: 100vh;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.connections {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.friends {
+    
+}
+
+/* .medicalDocs {
     background-color: #EEE;
     text-align: center;
     position: relative;
@@ -35,4 +60,4 @@
     text-align: center;
     width: 80%;
     left: 3%;
-}
+} */

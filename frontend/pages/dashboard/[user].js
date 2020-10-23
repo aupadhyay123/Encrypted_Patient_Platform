@@ -1,35 +1,41 @@
 // next.js
-import { useRouter } from "next/router";
 import Head from "next/head";
-
-// react.js
-import { useState } from "react";
 
 // components
 import Layout from '../../components/miscellaneous/Layout';
 import Menu from '../../components/dashboard/Menu';
 import Content from '../../components/dashboard/Content';
 
-const sections = [
-  'profile',
-  'messages',
-  'search',
-  'settings'
-]
+// redux
+import { connect } from 'react-redux';
 
-export default function User() {
-  const [section, setSection] = useState('messages');
+// react
+import { useEffect } from 'react';
+import { useRouter } from "next/router";
 
+function User(props) {
   const router = useRouter();
-  const { user } = router.query;
+
+  console.log('user: ' + props.user);
+  useEffect(() => {
+    if(!props.user) {
+      router.push('/login');
+    }
+  });
 
   return (
     <Layout>
       <Head>
         <title>Dashboard</title>
       </Head>
-      <Menu updateSection={(section) => setSection(section)} />
-      <Content section={section} />
+      <Menu />
+      <Content />
     </Layout>
   );
 }
+
+const mapStateToProps = (state) => ({
+  user: state.login.user
+});
+
+export default connect(mapStateToProps)(User);
