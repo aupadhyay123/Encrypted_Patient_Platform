@@ -4,24 +4,30 @@ from flask_socketio import SocketIO, send
 from .config import Config
 #from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
-from flask_cors import CORS,cross_origin
+from flask_cors import CORS, cross_origin
 import shortuuid
 import jwt
 import datetime
 from functools import wraps
 from cryptography.fernet import Fernet
+
 # ...app config...
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True)
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Qaz1234mko'
-app.config['MYSQL_DB'] = 'Vaunect'
-app.config['MYSQL_HOST'] = '127.0.0.1'
+app.config['MYSQL_PASSWORD'] = 'ea1o1gam'
+app.config['MYSQL_DB'] = 'vaunect'
+app.config['MYSQL_HOST'] = 'localhost'
 app.config['CORS_HEADERS'] = "Content-Type"
+
 app.config['SECRET-KEY'] = 'thisisthesecretkey'
 
 db = MySQL(app)
+from .conversations import conversation_blueprint
+app.register_blueprint(conversation_blueprint)
+
+#conversation_dao = ConversationDAO(db)
 
 f = open("secret_key.key", "r")
 key = f.readline()
@@ -64,20 +70,20 @@ def message_received(msg):
     send(msg, broadcast=True, include_self=False)
     return None
 
+
+
 @app.route("/register", methods=["POST"])
 @cross_origin()
 def register():
     req = request.get_json()
     print(req)
     user_id = shortuuid.ShortUUID().random(length=40)
-    private_key = req.get('private_key')
-    public_key = req.get('public_key')
     username = req.get('username')
     first_name = req.get('first_name')
-    last_name =  req.get('last_name')
-    email =  req.get('email')
+    last_name = req.get('last_name')
+    email = req.get('email')
     phone = req.get('phone')
-    password =  req.get('password')
+    password = req.get('password')
     cursor = db.connection.cursor()
     check_if_unique_user = '''SELECT * FROM users where username = %s or email = %s'''
     values = (username, email)
@@ -87,6 +93,8 @@ def register():
     if len(results) == 0:
         byte_version = bytes(first_name, 'utf-8')
         first_name = encrypt_key.encrypt(byte_version)
+        print(first_name)
+        print(len(first_name))
 
         byte_version= bytes(last_name, 'utf-8')
         last_name = encrypt_key.encrypt(byte_version)
@@ -101,8 +109,8 @@ def register():
         phone = encrypt_key.encrypt(byte_version)
 
         register_statement = """INSERT INTO users (user_id, username, first_name, last_name, email, phone, 
-                                password, private_key, public_key) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-        values = (user_id, username, first_name, last_name, email, phone, password, private_key, public_key)
+                                password) VALUES (%s, %s, %s, %s, %s, %s, %s);"""
+        values = (user_id, username, first_name, last_name, email, phone, password)
         cursor.execute(register_statement, values)
         db.connection.commit()
         return jsonify("registration:valid"), 200
@@ -123,7 +131,6 @@ def login():
     cursor = db.connection.cursor()
     cursor.execute(login_statement, [username])
     results = cursor.fetchall()
-
     if len(results) == 1:
         password_check = encrypt_key.decrypt(bytes(results[0][6], 'utf-8')).decode('utf-8')
         if(password_check == password):
@@ -133,8 +140,9 @@ def login():
             }, app.config['SECRET-KEY'])
                 
             return jsonify(user_id=results[0][0],login=True, token=token.decode('UTF-8')), 200
+
         else:
-            return jsonify(login=False),400
+            return jsonify(login=False), 400
     return jsonify(login=False), 400
 
 @app.route("/search", methods=["POST"])
@@ -226,5 +234,5 @@ def friend_request():
 
 if __name__ == '__main__':
     app.config['DEBUG'] = True #will automatically reload server on any code change (will be useful in debugging)
-    app.run()
+    #app.run()
     socketio.run(app, port=5000, debug=True)

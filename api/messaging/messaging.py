@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify, make_response, render_template, redirect, url_for
+from flask import Flask, request, jsonify, make_response, render_template, redirect, url_for, Blueprint
 from fusionauth.fusionauth_client import FusionAuthClient
 from flask_socketio import SocketIO
 from config import Config
-from app import app, socketio
+
 
 global app
 global socketio
