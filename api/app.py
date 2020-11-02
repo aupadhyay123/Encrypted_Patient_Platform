@@ -264,15 +264,22 @@ def update_friend_requests():
         return jsonify({'friend_request': 'ok'}), 200
 
 
-@app.route('/accept-friend-request', methods=['POST'])
+@app.route('/validate-friend-request', methods=['POST'])
 @cross_origin()
 def accept_friend_request():
     req = request.get_json()
 
     request_id = req.get('request_id')
-    delete_statement = f"DELETE FROM friend_requests WHERE friend_request_id=\"{request_id}\";"
-
+    accept_or_decline = req.get('accept')
+    friend_sender = req.get('sender')
+    friend_receiver = req.get('receiver')
     cursor = db.connection.cursor()
+    if(accept_or_decline){
+        print("accepted the friend request")
+        insert_statement = f"INSERT into friends (friend_id, user1, user2) VALUES (\"{friend_sender}\", \"{friend_receiver}\");"
+        cursor.execute(insert_statement)
+    }
+    delete_statement = f"DELETE FROM friend_requests WHERE friend_request_id=\"{request_id}\";"
     cursor.execute(delete_statement)
 
     return jsonify({'success': 'ok'}), 200
