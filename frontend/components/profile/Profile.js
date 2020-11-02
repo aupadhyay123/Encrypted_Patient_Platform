@@ -17,6 +17,7 @@ import FriendRequest from './FriendRequest';
 
 function Profile(props) {
   useEffect(() => {
+    console.log('friends: ' + props.friends);
     getFriends();
     getFriendRequests();
   }, []);

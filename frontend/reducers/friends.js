@@ -1,4 +1,6 @@
-const initialState = [];
+const initialState = {
+  friends: [],
+};
 
 const friends = (state = initialState, action) => {
   switch(action.type) {

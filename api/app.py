@@ -274,13 +274,15 @@ def accept_friend_request():
     friend_sender = req.get('sender')
     friend_receiver = req.get('receiver')
     cursor = db.connection.cursor()
-    if(accept_or_decline){
+    if accept_or_decline == True:
         print("accepted the friend request")
-        insert_statement = f"INSERT into friends (friend_id, user1, user2) VALUES (\"{friend_sender}\", \"{friend_receiver}\");"
+        insert_statement = f"INSERT into friends (friend_id, user1, user2) VALUES (null, \"{friend_sender}\", \"{friend_receiver}\");"
         cursor.execute(insert_statement)
-    }
+    
     delete_statement = f"DELETE FROM friend_requests WHERE friend_request_id=\"{request_id}\";"
     cursor.execute(delete_statement)
+
+    db.connection.commit()
 
     return jsonify({'success': 'ok'}), 200
 

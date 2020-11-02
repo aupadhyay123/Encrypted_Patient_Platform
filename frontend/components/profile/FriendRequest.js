@@ -1,25 +1,52 @@
 // css
 import styles from './FriendRequest.module.css';
 
-export default function FriendRequest(props) {
+// redux
+import { connect } from 'react-redux';
+
+// react
+import { useEffect } from 'react';
+
+const url = 'http://localhost:5000/validate-friend-request';
+
+function FriendRequest(props) {
+  useEffect(() => {
+    console.log('request_id', props.requestId);
+  })
   const acceptFriendRequest = () => {
-    const url = 'http://localhost:5000/update-friend-request';
     fetch(url, {
-      method: 'DELETE',
+      method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
-      body: {
+      body: JSON.stringify({
         request_id: props.requestId,
-      },
+        accept: true,
+        sender: props.sender,
+        receiver: props.user,
+      }),
     })
     .then(res => {
-
+      console.log(res);
     })
   }
 
   const declineFriendRequest = () => {
-
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        request_id: props.requestId,
+        accept: false,
+        sender: props.sender,
+        receiver: props.user,
+      }),
+    })
+    .then(res => {
+      console.log(res);
+    })
   }
 
   return (
@@ -32,3 +59,9 @@ export default function FriendRequest(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => ({
+  user: state.login.user,
+});
+
+export default connect(mapStateToProps)(FriendRequest);
