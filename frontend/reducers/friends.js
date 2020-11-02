@@ -2,7 +2,7 @@ const initialState = [];
 
 const friends = (state = initialState, action) => {
   switch(action.type) {
-    case 'RETRIEVE_FRIENDS':
+    case 'UPDATE_FRIENDS':
       return {
         ...state,
         friends: action.friends,

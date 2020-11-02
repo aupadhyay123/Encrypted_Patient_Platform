@@ -9,7 +9,7 @@ export default function SearchResult(props) {
   const { user } = router.query;
 
   const handleFriendRequest = () => {
-    const url = 'http://localhost:5000/friend-request';
+    const url = 'http://localhost:5000/update-friend-request';
     fetch(url, {
       method: 'POST',
       headers: {
@@ -22,17 +22,13 @@ export default function SearchResult(props) {
     })
     .then(res => {
       console.log(res);
-      if(res.status === 200) {
-        
-      }
     })
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.info}>
-        <h1>{props.firstName + ' ' + props.lastName}</h1>
-        <h3>{'@' + props.username}</h3>
+        <h1>{'@' + props.username}</h1>
       </div>
       <div className={styles.add} onClick={handleFriendRequest}>
         <img src={'/images/icons/plus.png'} />
