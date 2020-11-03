@@ -30,9 +30,21 @@ export default function SearchResult(props) {
       <div className={styles.info}>
         <h1>{'@' + props.username}</h1>
       </div>
-      <div className={styles.add} onClick={handleFriendRequest}>
-        <img src={'/images/icons/plus.png'} />
-      </div>
+      {props.status == 'none' &&
+        <div className={styles.add} onClick={handleFriendRequest}>
+          <img src={'/images/icons/plus.png'} />
+        </div>
+      }
+      {props.status == 'request_pending' &&
+        <div className={styles.add}>
+          <img src={'/images/icons/friend_request_sent.png'} />
+        </div>
+      }
+      {props.status == 'friends' &&
+        <div className={styles.add}>
+          <img src={'/images/icons/friends.png'} />
+        </div>
+      }
     </div>
   );
 }
