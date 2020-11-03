@@ -13,9 +13,6 @@ import { useState } from 'react';
 export default function Messages() {
   const [conversation, setConversation] = useState('');
 
-  const router = useRouter();
-  const { user } = router.query;
-
   return (
     <div className={styles.container}>
       <div className={styles.list}>
