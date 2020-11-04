@@ -11,8 +11,8 @@ export default function InputBar(props) {
   const textInput = useRef(null);
 
   useEffect(() => {
-    autosize(textInput);
-  }, [])
+    autosize(textInput.current);
+  }, []);
 
   const handleClick = () => {
     props.send();
@@ -30,9 +30,9 @@ export default function InputBar(props) {
         <h3>file</h3>
       </div> */}
       <div className={styles.message}>
-        <input type='textarea' className={styles.messageBar} value={props.msg} 
+        <textarea className={styles.messageBar} value={props.msg} 
           onChange={e => props.change(e)} onKeyPress={handleKeyPress}
-          placeholder='Type your message' ref={textInput} autoFocus />
+          placeholder='Type your message' ref={textInput} rows={1} autoFocus />
       </div>
       <div className={styles.send} id='send'>
         <button id={styles.sendButton} onClick={handleClick}>Send</button>

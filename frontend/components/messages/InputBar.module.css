@@ -22,15 +22,16 @@
 }
 
 .messageBar {
+  font-family: "Abel", sans-serif;
   width: 100%;
   min-height: 30px;
-  max-height: 75px;
+  max-height: 100px;
   resize: none;
   box-sizing: border-box;
   border-radius: 7px;
   padding: 10px;
   color: #000000;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .messageBar:focus {

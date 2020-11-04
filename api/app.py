@@ -165,30 +165,27 @@ def search():
     for i in results:
         user = {}
         user['username'] = i[0]
-        print("hello")
+        
         #if the user has already sent a friend request to this user
         search_from_friend_requests = f"""SELECT * from friend_requests where sender_id=\"{user_name}\" AND receiver_id=\"{i[0]}\";"""
         print(search_from_friend_requests)
+
         cursor.execute(search_from_friend_requests)
         friend_requests_results = cursor.fetchall()
         print(friend_requests_results)
+
         if len(friend_requests_results) > 0:
             user['status'] = 'request_pending'
         else:
-            #next two statements are if the user is already friends with this user
-            search_from_friends = f"SELECT * from friends where user1=\"{user_name}\" AND user2=\"{i[0]}\";"
-            search_from_friends_reversed = f"SELECT * from friends where user1=\"{i[0]}\" AND user2=\"{user_name}\";"
+            # statement to search if user is already friends 
+            search_from_friends = f"""SELECT * from friends where (user1=\"{user_name}\" AND user2=\"{i[0]}\")
+                                        OR (user1=\"{i[0]}\" AND user2=\"{user_name}\");"""
             cursor.execute(search_from_friends)
             friend_results = cursor.fetchall()
             if len(friend_results) > 0:
                 user['status'] = 'friends'
             else:
-                cursor.execute(search_from_friends_reversed)
-                friends_reversed_results = cursor.fetchall()
-                if len(friends_reversed_results) >0:
-                    user['status'] = 'friends'
-                else:
-                    user['status'] = 'none'
+                user['status'] = 'none'
         results_list.append(user)
 
     print(results_list)
