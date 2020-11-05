@@ -37,7 +37,7 @@ export default function SearchResult(props) {
       }
       {props.status == 'request_pending' &&
         <div className={styles.add}>
-          <img src={'/images/icons/friend_request_sent.png'} />
+          <img src={'/images/icons/friend_request_sent.svg'} />
         </div>
       }
       {props.status == 'friends' &&
