@@ -1,36 +1,32 @@
 // components
 import MessageList from './MessageList';
 import Conversation from './Conversation';
-import PopoverContent from './PopoverContent';
+import FriendSearchModal from './FriendSearchModal';
 
 // redux
 import { connect } from 'react-redux';
 
 // css
-import styles from './Messages.module.css';
-import { useRef, useState } from 'react';
+import nextStyles from './Messages.module.css';
 
-// react-popover
-import Popover from 'react-popover';
+// react
+import { useState } from 'react';
 
 function Messages(props) {
-  const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const content = (
-    <div style={{backgroundColor:'red', padding:'25px'}}>
-      <h1>hello</h1>
-    </div>
-  );
+  const handleToggle = () => {
+    setModalOpen(!modalOpen);
+  };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.list}>
-        <div className={styles.addContainer}>
-          <Popover preferPlace={'right'} isOpen={open} body={content}>
-            <div className={styles.addButton} onClick={() => setOpen(!open)}>
-              <img src={'/images/icons/plus.png'} />
-            </div>
-          </Popover>
+    <div className={nextStyles.container}>
+      <div className={nextStyles.list}>
+        <div className={nextStyles.addContainer}>
+          <div className={nextStyles.addButton} onClick={handleToggle}>
+            <img src={'/images/icons/plus.png'} />
+          </div>
+          { modalOpen ? <FriendSearchModal toggle={() => handleToggle()} /> : null }
         </div>
         <MessageList />
       </div>

@@ -8,13 +8,16 @@
     "start": "next start"
   },
   "dependencies": {
+    "@popperjs/core": "^2.5.4",
     "@reduxjs/toolkit": "^1.4.0",
     "autosize": "^4.0.2",
+    "classnames": "^2.2.6",
     "next": "9.5.3",
     "react": "16.13.1",
     "react-bootstrap": "^1.3.0",
     "react-dom": "16.13.1",
     "react-popover": "^0.5.10",
+    "react-popper": "^2.2.3",
     "react-redux": "^7.2.1",
     "react-scroll": "^1.8.1",
     "redux": "^4.0.5",

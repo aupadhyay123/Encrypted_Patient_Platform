@@ -27,6 +27,7 @@
   display: inline-flex;
   padding: 8px;
   background-color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
 }
 
 .addButton img {

@@ -1,0 +1,38 @@
+.overlay {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 99;
+  top: 0;
+  left: 0;
+}
+
+.container {
+    position: fixed;
+    z-index: 100;
+    width: 50vw;
+    height: 50vh;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 25px;
+}
+
+.close {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.friends {
+  text-align: center;
+}
