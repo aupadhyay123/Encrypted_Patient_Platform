@@ -5,28 +5,20 @@ import FriendSearchModal from './FriendSearchModal';
 
 // redux
 import { connect } from 'react-redux';
+import { toggleFriendSearchModal } from '../../actions/toggleFriendSearchModal';
 
 // css
 import nextStyles from './Messages.module.css';
 
-// react
-import { useState } from 'react';
-
 function Messages(props) {
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const handleToggle = () => {
-    setModalOpen(!modalOpen);
-  };
-
   return (
     <div className={nextStyles.container}>
       <div className={nextStyles.list}>
         <div className={nextStyles.addContainer}>
-          <div className={nextStyles.addButton} onClick={handleToggle}>
+          <div className={nextStyles.addButton} onClick={() => props.toggleFriendSearchModal()}>
             <img src={'/images/icons/plus.png'} />
           </div>
-          { modalOpen ? <FriendSearchModal toggle={() => handleToggle()} /> : null }
+          { props.friendSearchModalOpen ? <FriendSearchModal /> : null }
         </div>
         <MessageList />
       </div>
@@ -37,6 +29,11 @@ function Messages(props) {
 
 const mapStateToProps = (state) => ({
   friends: state.friends.friends,
+  friendSearchModalOpen: state.friendSearchModal.friendSearchModalOpen,
 });
 
-export default connect(mapStateToProps)(Messages);
+const dispatchStateToProps = (dispatch) => ({
+  toggleFriendSearchModal: () => dispatch(toggleFriendSearchModal()),
+});
+
+export default connect(mapStateToProps, dispatchStateToProps)(Messages);

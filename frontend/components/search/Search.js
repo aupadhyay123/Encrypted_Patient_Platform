@@ -53,7 +53,8 @@ function Search(props) {
   return (
     <div className={styles.container}>
       <div className={styles.search}>
-        <input autoFocus type='text' placeholder={'Search for users...'} value={props.friendQuery} onChange={(e) => props.setFriendQuery(e)} />
+        <input autoFocus type='text' placeholder={'Search for users...'} 
+        value={props.friendQuery} onChange={(e) => props.setFriendQuery(e)} />
       </div>
       <div className={styles.results}>
         {Results}
