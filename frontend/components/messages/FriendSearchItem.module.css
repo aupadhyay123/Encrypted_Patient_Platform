@@ -1,0 +1,11 @@
+.container {
+  cursor: pointer;
+  margin: 10px;
+  border: 1px solid #000;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.container h3 {
+  font-size: 15px;
+}

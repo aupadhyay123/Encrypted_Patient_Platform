@@ -16,7 +16,7 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True)
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'ea1o1gam'
+app.config['MYSQL_PASSWORD'] = 'Qaz1234mko'
 app.config['MYSQL_DB'] = 'vaunect'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['CORS_HEADERS'] = "Content-Type"
@@ -152,26 +152,43 @@ def search():
     req = request.get_json()
 
     query = req.get('query')
-    user = req.get('user')
-
-    search_statement = f"""SELECT username, first_name, last_name FROM users 
-                            WHERE (username LIKE \"%{query}%\" 
-                            OR CONCAT_WS(\" \", first_name, last_name) LIKE \"%{query}%\")
-                            AND username != \"{user}\";"""
+    user_name = req.get('user')
+    search_statement = f"""SELECT username FROM users 
+                            WHERE username LIKE \"%{query}%\"
+                            AND username != \"{user_name}\";"""
 
     cursor = db.connection.cursor()
     cursor.execute(search_statement)
     results = cursor.fetchall()
-    print(results)
 
     results_list = []
     for i in results:
         user = {}
         user['username'] = i[0]
-        user['first_name'] = i[1]
-        user['last_name'] = i[2]
+        
+        #if the user has already sent a friend request to this user
+        search_from_friend_requests = f"""SELECT * from friend_requests where sender_id=\"{user_name}\" AND receiver_id=\"{i[0]}\";"""
+        print(search_from_friend_requests)
+
+        cursor.execute(search_from_friend_requests)
+        friend_requests_results = cursor.fetchall()
+        print(friend_requests_results)
+
+        if len(friend_requests_results) > 0:
+            user['status'] = 'request_pending'
+        else:
+            # statement to search if user is already friends 
+            search_from_friends = f"""SELECT * from friends where (user1=\"{user_name}\" AND user2=\"{i[0]}\")
+                                        OR (user1=\"{i[0]}\" AND user2=\"{user_name}\");"""
+            cursor.execute(search_from_friends)
+            friend_results = cursor.fetchall()
+            if len(friend_results) > 0:
+                user['status'] = 'friends'
+            else:
+                user['status'] = 'none'
         results_list.append(user)
 
+    print(results_list)
     return jsonify({'success':'ok','results':results_list}), 200
 
 
@@ -193,30 +210,67 @@ def get_user():
         return jsonify({"success":"ok"}), 200
 
 
-@app.route('/friends?', methods=['GET', 'POST', 'DELETE'])
+@app.route('/friends', methods=['POST'])
 @cross_origin()
 def friends():
-    if request.method == 'GET':
-        req = request.get_json()
+    print(f'retrieving friends for user')
+    req = request.get_json()
 
-        user = req.get('user')
-        friends_statement = f"SELECT username FROM users WHERE user1={user} OR user2={user};"
+    user = req.get('user')
+    friends_statement = f"SELECT user1, user2 FROM friends WHERE user1=\"{user}\" OR user2=\"{user}\";"
 
-        cursor = db.connection.cursor()
-        cursor.execute(friends_statement)
-        results = cursor.fetchall()
-        print(results)
+    cursor = db.connection.cursor()
+    cursor.execute(friends_statement)
+    results = cursor.fetchall()
 
-        return jsonify({
-            'success': 'ok',
-            'friends': results,
-        }), 200
+    results_list = []
+    for i in results:
+        if i[0] == user:
+            results_list.append(i[1])
+        else:
+            results_list.append(i[0])
 
+    return jsonify({
+        'success': 'ok',
+        'friends': results_list,
+    }), 200
 
-# TODO
-@app.route('/friend-request', methods=['POST', 'DELETE'])
+@app.route('/update-friends', methods=['POST', 'DELETE'])
 @cross_origin()
-def friend_request():
+def update_friends():
+    print('updating friend request')
+    if request.method == 'POST':
+        pass
+    elif request.method == 'DELETE':
+        pass
+
+
+@app.route('/friend-requests', methods=['POST'])
+@cross_origin()
+def friend_requests():
+    print('retrieving friend requests for user')
+    req = request.get_json()
+
+    user = req.get('user')
+    requests_statement = f"SELECT friend_request_id, sender_id FROM friend_requests WHERE receiver_id=\"{user}\";"
+
+    cursor = db.connection.cursor()
+    cursor.execute(requests_statement)
+    results = cursor.fetchall()
+
+    results_list = []
+    for i in results:
+        friend_request = {}
+        friend_request['id'] = i[0]
+        friend_request['sender'] = i[1]
+        results_list.append(friend_request)
+
+    return jsonify({'success': 'ok', 'friend_requests': results_list}), 200
+
+
+@app.route('/update-friend-request', methods=['POST'])
+@cross_origin()
+def update_friend_requests():
     if request.method == 'POST':
         req = request.get_json()
 
@@ -229,8 +283,30 @@ def friend_request():
         db.connection.commit()
 
         return jsonify({'friend_request': 'ok'}), 200
-    elif request.method == 'DELETE':
-        pass
+
+
+@app.route('/validate-friend-request', methods=['POST'])
+@cross_origin()
+def accept_friend_request():
+    req = request.get_json()
+
+    request_id = req.get('request_id')
+    accept_or_decline = req.get('accept')
+    friend_sender = req.get('sender')
+    friend_receiver = req.get('receiver')
+    cursor = db.connection.cursor()
+    if accept_or_decline == True:
+        print("accepted the friend request")
+        insert_statement = f"INSERT into friends (friend_id, user1, user2) VALUES (null, \"{friend_sender}\", \"{friend_receiver}\");"
+        cursor.execute(insert_statement)
+    
+    delete_statement = f"DELETE FROM friend_requests WHERE friend_request_id=\"{request_id}\";"
+    cursor.execute(delete_statement)
+
+    db.connection.commit()
+
+    return jsonify({'success': 'ok'}), 200
+
 
 if __name__ == '__main__':
     app.config['DEBUG'] = True #will automatically reload server on any code change (will be useful in debugging)

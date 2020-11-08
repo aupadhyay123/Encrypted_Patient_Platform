@@ -47,13 +47,14 @@ function Search(props) {
   }, [props.friendQuery]);
 
   const Results = props.friendResults.map(user => (
-    <SearchResult key={user['username']} username={user['username']} firstName={user['first_name']} lastName={user['last_name']} />
+    <SearchResult key={user['username']} username={user['username']} status={user['status']}/>
   ));
 
   return (
     <div className={styles.container}>
       <div className={styles.search}>
-        <input autoFocus type='text' placeholder={'Search for users...'} value={props.friendQuery} onChange={(e) => props.setFriendQuery(e)} />
+        <input autoFocus type='text' placeholder={'Search for users...'} 
+        value={props.friendQuery} onChange={(e) => props.setFriendQuery(e)} />
       </div>
       <div className={styles.results}>
         {Results}

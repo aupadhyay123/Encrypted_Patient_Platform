@@ -1,7 +1,19 @@
 // css
 import styles from './InputBar.module.css';
 
+// react
+import { useEffect, useRef } from 'react';
+
+// autosize
+import autosize from 'autosize';
+
 export default function InputBar(props) {
+  const textInput = useRef(null);
+
+  useEffect(() => {
+    autosize(textInput.current);
+  }, []);
+
   const handleClick = () => {
     props.send();
   }
@@ -14,13 +26,13 @@ export default function InputBar(props) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.files}>
+      {/* <div className={styles.files}>
         <h3>file</h3>
-      </div>
+      </div> */}
       <div className={styles.message}>
-        <input type='text' className={styles.messageBar} id='message' value={props.msg} 
+        <textarea className={styles.messageBar} value={props.msg} 
           onChange={e => props.change(e)} onKeyPress={handleKeyPress}
-          placeholder='Type your message' autoFocus />
+          placeholder='Type your message' ref={textInput} rows={1} autoFocus />
       </div>
       <div className={styles.send} id='send'>
         <button id={styles.sendButton} onClick={handleClick}>Send</button>

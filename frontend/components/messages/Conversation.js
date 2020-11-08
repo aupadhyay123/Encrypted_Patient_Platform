@@ -11,8 +11,8 @@ import io from 'socket.io-client';
 // react.js
 import { useEffect, useState, useRef } from 'react';
 
-// next.js
-import { useRouter } from 'next/router';
+// redux
+import { connect } from 'react-redux';
 
 import {generate_key_nonce, encrypt_message, decrypt_message} from "../../encryption/Encryption";
 
@@ -22,10 +22,7 @@ import { animateScroll } from 'react-scroll';
 let endpoint = 'http://localhost:5000';
 let socket = io.connect(endpoint);
 
-export default function Conversation(props) {
-  const router = useRouter();
-  const { user } = router.query;
-
+function Conversation(props) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
 
@@ -147,12 +144,14 @@ export default function Conversation(props) {
 
   return (
     <div className={styles.container}>
-      {/* {!props.selected && 
+      {!props.selectedConversation && 
         <div className={styles.empty}>
-          <h1>Please select a conversation</h1>
+          <h1>Press on the "+" icon to start a conversation</h1>
+          <h1>or</h1>
+          <h1>Select a conversation</h1>
         </div>
-      } */}
-      {!props.selected &&
+      }
+      {props.selectedConversation &&
         <div className={styles.selected}>
           <div className={styles.conversation} id='conversation'>
             {messages.map(msg => (
@@ -167,3 +166,9 @@ export default function Conversation(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => ({
+  selectedConversation: state.conversations.selectedConversation,
+});
+
+export default connect(mapStateToProps)(Conversation);

@@ -83,8 +83,6 @@ function LoginModal(props) {
   );
 }
 
-
-
 const mapDispatchToProps = (dispatch) => ({
   loginUser: (user) => dispatch(login(user))
 })
