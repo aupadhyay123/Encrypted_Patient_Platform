@@ -7,6 +7,7 @@ import Bubble from './Bubble';
 
 // socket.io
 import io from 'socket.io-client';
+import { useRouter } from 'next/router';
 
 // react.js
 import { useEffect, useState, useRef } from 'react';
@@ -19,12 +20,21 @@ import {generate_key_nonce, encrypt_message, decrypt_message} from "../../encryp
 // react-scroll
 import { animateScroll } from 'react-scroll';
 
-let endpoint = 'http://localhost:5000';
-let socket = io.connect(endpoint);
 
+let endpoint = 'http://localhost:5000';
+const socket = io.connect(endpoint);
+// let sessionID = 0; 
+// var socketConnection = io.connect();
+// socket.on('connect', function() {
+//   sessionID = socket.socket.sessionid; 
+// });
 function Conversation(props) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const router = useRouter();
+  const { user } = router.query;
+  //console.log(socket.id);
+  socket.emit('loggedIn', user);
 
   const messagesEndRef = useRef(null);
 
@@ -37,7 +47,8 @@ function Conversation(props) {
   // will call when first time app render and
   // every time message length changes
   const getMessages = () => {
-    socket.on('message', async msg => {
+    socket.on('private_message', async msg => {
+      console.log("im in here");
       var key;
       //var nonce;
       var base_url = 'http://127.0.0.1:5000/'
@@ -81,11 +92,12 @@ function Conversation(props) {
   // will need to export wrapper that handles these events
   // const handleSendMessage = (txt) => sendMessage(text);
   const sendMessage = async() => {
-    if(message !== "") {
+    if(message.length < 40 && message !== "") {
       let sentMessage = {
         'type': 0,
         'text': message
       };
+
       setMessages([...messages, sentMessage]);
       var base_url = 'http://127.0.0.1:5000/'
       const params = {
@@ -95,16 +107,13 @@ function Conversation(props) {
         body: JSON.stringify({user1: "arif1", user2: "arif2"}),
         method: "POST"
       }
-      console.log('kakakaka')
       var key;
-      //var nonce;
       await fetch(base_url+'conversation/exists', params)
           .then(data => {return data.json()})
           .then(async res => {
             if(res.results == 'False'){
               var key_nonce = generate_key_nonce()
               key = key_nonce['key']
-              //nonce = key_nonce['nonce']
               const create_params = {
                 headers: {
                   "content-type": "application/json"
@@ -124,10 +133,10 @@ function Conversation(props) {
                   })
             }
           })
-      console.log(encrypt_message(message, key))
-      console.log(decrypt_message(encrypt_message(message, key), key))
-
-      socket.emit('message', encrypt_message(message, key));
+      //send message to server
+      socket.emit('message', encrypt_message(message, key), props.selectedConversation);
+      //socket.to(receiverSessionId).emit('message', encrypt_message(message, key));
+      
       setMessage("");
       console.log('Message sent!')
     }
