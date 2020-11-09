@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { connect } from 'react-redux';
 import { login } from '../../actions/login';
 
+
 function LoginModal(props) {
   const router = useRouter();
 
@@ -41,16 +42,11 @@ function LoginModal(props) {
       if(res.status === 200) {
         props.loginUser(username);
         router.push('/dashboard/' + username);
-        // return res.json()
       }
       else {
         console.log("Looks like there was a problem. Status code: " + res.status);
         return;
       }
-    })
-    .then(data => {
-        sessionStorage.setItem('0_key', data['key0']);
-        sessionStorage.setItem('1_key', data['key1']);
     })
     .catch(error => {
       console.log("Fetch error: " + error);
@@ -86,5 +82,4 @@ function LoginModal(props) {
 const mapDispatchToProps = (dispatch) => ({
   loginUser: (user) => dispatch(login(user))
 })
-
 export default connect(null, mapDispatchToProps)(LoginModal);

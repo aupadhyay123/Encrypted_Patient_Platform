@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, make_response, render_template, redirect, url_for
 from fusionauth.fusionauth_client import FusionAuthClient
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO,emit
 from .config import Config
 #from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
@@ -33,6 +33,7 @@ f = open("secret_key.key", "r")
 key = f.readline()
 encrypt_key = Fernet(key)
 
+onlineUsers = {}
 
 def token_required(f):
     @wraps(f)
@@ -63,14 +64,30 @@ def unprotected():
 def protected():
     return jsonify({'message': 'This is only available for people with valid tokens.'})
 
-
+#server receives the message from sender and redirects it to the receiver
 @socketio.on('message')
-def message_received(msg):
-    print(msg)
-    send(msg, broadcast=True, include_self=False)
+def message_received(msg, receiver):
+    emit('private_message', msg, room=onlineUsers.get(receiver))
     return None
 
+@socketio.on('loggedIn')
+def user_has_logged_in(username):
+    onlineUsers[str(username)] = request.sid
+    print(onlineUsers)
+    return None
 
+@app.route("/get_socket_id", methods=["POST"])
+@cross_origin()
+def get_socket_id():
+    req = request.get_json()
+    print(req)
+    username = str(req.username)
+    print(username)
+    sessionId = onlineUsers.get(username)
+    if sessionId != None:
+        return jsonify(sessionId=sessionId), 200
+    else:
+        return jsonify(sessionId=none), 400
 
 @app.route("/register", methods=["POST"])
 @cross_origin()
@@ -311,4 +328,4 @@ def accept_friend_request():
 if __name__ == '__main__':
     app.config['DEBUG'] = True #will automatically reload server on any code change (will be useful in debugging)
     #app.run()
-    socketio.run(app, port=5000, debug=True)
+    socketio.run(app, port=5000, debug=False)
