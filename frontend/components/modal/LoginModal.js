@@ -7,17 +7,25 @@ import styles from './Modal.module.css';
 
 // next.js
 import Link from 'next/link';
+import {useRouter} from 'next/router';
 
 // react.js
 import { useState } from 'react';
 
-export default function LoginModal(props) {
-  const [email, setEmail] = useState('');
+// redux
+import { connect } from 'react-redux';
+import { login } from '../../actions/login';
+
+
+function LoginModal(props) {
+  const router = useRouter();
+
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = e => {
     e.preventDefault();
-    const url = 'http://cd40ad7bea40.ngrok.io/login';
+    const url = 'http://localhost:5000/login';
     fetch(url, {
       method: "post",
       headers: {
@@ -25,19 +33,23 @@ export default function LoginModal(props) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: email,
+        username: username,
         password: password,
       })
     })
-    .then(data => {
-      return data.json()
-    })
     .then(res => {
-        console.log(res);
-        if(res.status === 200) {
-          const router = useRouter();
-          router.push('/dashboard/messages');
-        }
+      console.log(res);
+      if(res.status === 200) {
+        props.loginUser(username);
+        router.push('/dashboard/' + username);
+      }
+      else {
+        console.log("Looks like there was a problem. Status code: " + res.status);
+        return;
+      }
+    })
+    .catch(error => {
+      console.log("Fetch error: " + error);
     })
   }
 
@@ -50,10 +62,10 @@ export default function LoginModal(props) {
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
           <FormInput 
-            title='Email' 
+            title='Username' 
             type='text'
-            onChange={(e) => setEmail(e.target.value)}
-            value={email} />
+            onChange={(e) => setUsername(e.target.value)}
+            value={username} />
           <FormInput 
             title='Password' 
             type='password'
@@ -66,3 +78,8 @@ export default function LoginModal(props) {
     </Modal>
   );
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  loginUser: (user) => dispatch(login(user))
+})
+export default connect(null, mapDispatchToProps)(LoginModal);

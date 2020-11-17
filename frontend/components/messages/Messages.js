@@ -1,30 +1,39 @@
 // components
 import MessageList from './MessageList';
 import Conversation from './Conversation';
-import AddButton from './AddButton';
+import FriendSearchModal from './FriendSearchModal';
 
-// next.js
-import { useRouter } from "next/router";
+// redux
+import { connect } from 'react-redux';
+import { toggleFriendSearchModal } from '../../actions/toggleFriendSearchModal';
 
 // css
-import styles from './Messages.module.css';
-import { useState } from 'react';
+import nextStyles from './Messages.module.css';
 
-export default function Messages() {
-  const [conversation, setConversation] = useState('');
-
-  const router = useRouter();
-  const { user } = router.query;
-
+function Messages(props) {
   return (
-    <div className={styles.container}>
-      <div className={styles.list}>
-        <div className={styles.addContainer}>
-          <AddButton size='20px' />
+    <div className={nextStyles.container}>
+      <div className={nextStyles.list}>
+        <div className={nextStyles.addContainer}>
+          <div className={nextStyles.addButton} onClick={() => props.toggleFriendSearchModal()}>
+            <img src={'/images/icons/plus.png'} />
+          </div>
+          { props.friendSearchModalOpen ? <FriendSearchModal /> : null }
         </div>
-        <MessageList selectConversation={(conversation) => setConversation(conversation)} />
+        <MessageList />
       </div>
-      <Conversation selected={conversation} />
+      <Conversation />
     </div>
   );
 }
+
+const mapStateToProps = (state) => ({
+  friends: state.friends.friends,
+  friendSearchModalOpen: state.friendSearchModal.friendSearchModalOpen,
+});
+
+const dispatchStateToProps = (dispatch) => ({
+  toggleFriendSearchModal: () => dispatch(toggleFriendSearchModal()),
+});
+
+export default connect(mapStateToProps, dispatchStateToProps)(Messages);

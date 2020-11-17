@@ -1,66 +1,331 @@
 from flask import Flask, request, jsonify, make_response, render_template, redirect, url_for
 from fusionauth.fusionauth_client import FusionAuthClient
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO,emit
 from .config import Config
 #from flask_sqlalchemy import SQLAlchemy
 from flask_mysqldb import MySQL
+from flask_cors import CORS, cross_origin
 import shortuuid
+import jwt
+import datetime
+from functools import wraps
+from cryptography.fernet import Fernet
 
 # ...app config...
 app = Flask(__name__)
+CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True)
-
-app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'Qaz1234mko'
-app.config['MYSQL_DB'] = 'Vaunect'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:Qaz1234mko@localhost/Vaunect'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MYSQL_DB'] = 'vaunect'
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['CORS_HEADERS'] = "Content-Type"
+
+app.config['SECRET-KEY'] = 'thisisthesecretkey'
+
 db = MySQL(app)
+from .conversations import conversation_blueprint
+app.register_blueprint(conversation_blueprint)
+
+#conversation_dao = ConversationDAO(db)
+
+f = open("secret_key.key", "r")
+key = f.readline()
+encrypt_key = Fernet(key)
+
+onlineUsers = {}
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.args.get('token') #https:localhost:5000/route?token=afj203qfw0aef
+
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 403
+
+        try:
+            data = jwt.decode(token, app.config['SECRET-KEY'])
+            print(data)
+        except:
+            return jsonify({'message': 'Token is invalid'}), 403
+
+        return f(*args, **kwargs)
+
+    return decorated
 
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        print('hello')
-        req = request.get_json()
-        print(req)
+@app.route('/unprotected')
+def unprotected():
+    return jsonify({'message': 'Anyone can view this!'})
 
-        res = make_response(jsonify({"message": "ok"}), 400)
-        return res
-    # user_id = shortuuid.ShortUUID().random(length=40)
-    # username = req[]
 
-    # new_user = {
-    #     "user_id": shortuuid.ShortUUID().random(length=40),
-    #     "username": data.get('username'),
-    #     "first_name": data.get('first_name'),
-    #     "last_name": data.get('last_name'),
-    #     "email": data.get('email'),
-    #     "phone": data.get('phone'),
-    #     "password": data.get('password')
-    # }
+@app.route('/protected')
+@token_required
+def protected():
+    return jsonify({'message': 'This is only available for people with valid tokens.'})
 
-    # register = (f"INSERT INTO users"
-    #             + "(user_id, username, first_name, last_name, email, phone, password)"
-    #             + "VALUES ({user_id}, {username}, {first_name}, {last_name}, {email}, {phone}, {password})")
-
-    # cursor = db.connection.cursor()
-    # cursor.execute(register, new_user)
-    
-    # results = cursor.fetchall()
-    # if results:
-    #     return jsonify(new_user), 200
-    # else:
-    #     return jsonify(new_user), 400
-
+#server receives the message from sender and redirects it to the receiver
 @socketio.on('message')
-def message_received(msg):
-    print(msg)
-    send(msg, broadcast=True, include_self=False)
+def message_received(msg, receiver):
+    emit('private_message', msg, room=onlineUsers.get(receiver))
     return None
+
+@socketio.on('loggedIn')
+def user_has_logged_in(username):
+    onlineUsers[str(username)] = request.sid
+    print(onlineUsers)
+    return None
+
+@app.route("/get_socket_id", methods=["POST"])
+@cross_origin()
+def get_socket_id():
+    req = request.get_json()
+    print(req)
+    username = str(req.username)
+    print(username)
+    sessionId = onlineUsers.get(username)
+    if sessionId != None:
+        return jsonify(sessionId=sessionId), 200
+    else:
+        return jsonify(sessionId=none), 400
+
+@app.route("/register", methods=["POST"])
+@cross_origin()
+def register():
+    req = request.get_json()
+    print(req)
+    user_id = shortuuid.ShortUUID().random(length=40)
+    username = req.get('username')
+    first_name = req.get('first_name')
+    last_name = req.get('last_name')
+    email = req.get('email')
+    phone = req.get('phone')
+    password = req.get('password')
+    cursor = db.connection.cursor()
+    check_if_unique_user = '''SELECT * FROM users where username = %s or email = %s'''
+    values = (username, email)
+    cursor.execute(check_if_unique_user, values)
+    results = cursor.fetchall()
+
+    if len(results) == 0:
+        byte_version = bytes(first_name, 'utf-8')
+        first_name = encrypt_key.encrypt(byte_version)
+        print(first_name)
+        print(len(first_name))
+
+        byte_version= bytes(last_name, 'utf-8')
+        last_name = encrypt_key.encrypt(byte_version)
+
+        byte_version=bytes(email, 'utf-8')
+        email = encrypt_key.encrypt(byte_version)
+
+        byte_version=bytes(password, 'utf-8')
+        password = encrypt_key.encrypt(byte_version)
+
+        byte_version=bytes(phone, 'utf-8')
+        phone = encrypt_key.encrypt(byte_version)
+
+        register_statement = """INSERT INTO users (user_id, username, first_name, last_name, email, phone, 
+                                password) VALUES (%s, %s, %s, %s, %s, %s, %s);"""
+        values = (user_id, username, first_name, last_name, email, phone, password)
+        cursor.execute(register_statement, values)
+        db.connection.commit()
+        return jsonify("registration:valid"), 200
+    else:
+        return jsonify("email or username is already being used"), 400
+
+
+@app.route("/login", methods=["POST"])
+@cross_origin()
+def login():
+    req = request.get_json()
+
+    username = str(req.get('username'))
+    password = req.get('password')
+
+    login_statement = "SELECT * FROM users WHERE username= %s"
+
+    cursor = db.connection.cursor()
+    cursor.execute(login_statement, [username])
+    results = cursor.fetchall()
+    if len(results) == 1:
+        password_check = encrypt_key.decrypt(bytes(results[0][6], 'utf-8')).decode('utf-8')
+        if(password_check == password):
+            token = jwt.encode({
+                'user': username,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+            }, app.config['SECRET-KEY'])
+                
+            return jsonify(user_id=results[0][0],login=True, token=token.decode('UTF-8')), 200
+
+        else:
+            return jsonify(login=False), 400
+    return jsonify(login=False), 400
+
+@app.route("/search", methods=["POST"])
+@cross_origin()
+def search():
+    print("Attempting to search for user")
+    req = request.get_json()
+
+    query = req.get('query')
+    user_name = req.get('user')
+    search_statement = f"""SELECT username FROM users 
+                            WHERE username LIKE \"%{query}%\"
+                            AND username != \"{user_name}\";"""
+
+    cursor = db.connection.cursor()
+    cursor.execute(search_statement)
+    results = cursor.fetchall()
+
+    results_list = []
+    for i in results:
+        user = {}
+        user['username'] = i[0]
+        
+        #if the user has already sent a friend request to this user
+        search_from_friend_requests = f"""SELECT * from friend_requests where sender_id=\"{user_name}\" AND receiver_id=\"{i[0]}\";"""
+        print(search_from_friend_requests)
+
+        cursor.execute(search_from_friend_requests)
+        friend_requests_results = cursor.fetchall()
+        print(friend_requests_results)
+
+        if len(friend_requests_results) > 0:
+            user['status'] = 'request_pending'
+        else:
+            # statement to search if user is already friends 
+            search_from_friends = f"""SELECT * from friends where (user1=\"{user_name}\" AND user2=\"{i[0]}\")
+                                        OR (user1=\"{i[0]}\" AND user2=\"{user_name}\");"""
+            cursor.execute(search_from_friends)
+            friend_results = cursor.fetchall()
+            if len(friend_results) > 0:
+                user['status'] = 'friends'
+            else:
+                user['status'] = 'none'
+        results_list.append(user)
+
+    print(results_list)
+    return jsonify({'success':'ok','results':results_list}), 200
+
+
+@app.route('/user', methods=['POST'])
+@cross_origin()
+def get_user():
+    print('retrieving user information')
+    req = request.get_json()
+
+    user_id = req.get('user_id')
+    user_statement = f"SELECT username, first_name, last_name FROM users WHERE user_id={user_id}"
+
+    cursor = db.connection.cursor()
+    cursor.execute(user_statement)
+    results = cursor.fetchall()
+    print(results)
+
+    if len(results) == 1:
+        return jsonify({"success":"ok"}), 200
+
+
+@app.route('/friends', methods=['POST'])
+@cross_origin()
+def friends():
+    print(f'retrieving friends for user')
+    req = request.get_json()
+
+    user = req.get('user')
+    friends_statement = f"SELECT user1, user2 FROM friends WHERE user1=\"{user}\" OR user2=\"{user}\";"
+
+    cursor = db.connection.cursor()
+    cursor.execute(friends_statement)
+    results = cursor.fetchall()
+
+    results_list = []
+    for i in results:
+        if i[0] == user:
+            results_list.append(i[1])
+        else:
+            results_list.append(i[0])
+
+    return jsonify({
+        'success': 'ok',
+        'friends': results_list,
+    }), 200
+
+@app.route('/update-friends', methods=['POST', 'DELETE'])
+@cross_origin()
+def update_friends():
+    print('updating friend request')
+    if request.method == 'POST':
+        pass
+    elif request.method == 'DELETE':
+        pass
+
+
+@app.route('/friend-requests', methods=['POST'])
+@cross_origin()
+def friend_requests():
+    print('retrieving friend requests for user')
+    req = request.get_json()
+
+    user = req.get('user')
+    requests_statement = f"SELECT friend_request_id, sender_id FROM friend_requests WHERE receiver_id=\"{user}\";"
+
+    cursor = db.connection.cursor()
+    cursor.execute(requests_statement)
+    results = cursor.fetchall()
+
+    results_list = []
+    for i in results:
+        friend_request = {}
+        friend_request['id'] = i[0]
+        friend_request['sender'] = i[1]
+        results_list.append(friend_request)
+
+    return jsonify({'success': 'ok', 'friend_requests': results_list}), 200
+
+
+@app.route('/update-friend-request', methods=['POST'])
+@cross_origin()
+def update_friend_requests():
+    if request.method == 'POST':
+        req = request.get_json()
+
+        sender = req.get('sender')
+        receiver = req.get('receiver')
+        friend_request_statement = f"INSERT INTO friend_requests (sender_id, receiver_id) VALUES (\"{sender}\", \"{receiver}\");"
+
+        cursor = db.connection.cursor()
+        cursor.execute(friend_request_statement)
+        db.connection.commit()
+
+        return jsonify({'friend_request': 'ok'}), 200
+
+
+@app.route('/validate-friend-request', methods=['POST'])
+@cross_origin()
+def accept_friend_request():
+    req = request.get_json()
+
+    request_id = req.get('request_id')
+    accept_or_decline = req.get('accept')
+    friend_sender = req.get('sender')
+    friend_receiver = req.get('receiver')
+    cursor = db.connection.cursor()
+    if accept_or_decline == True:
+        print("accepted the friend request")
+        insert_statement = f"INSERT into friends (friend_id, user1, user2) VALUES (null, \"{friend_sender}\", \"{friend_receiver}\");"
+        cursor.execute(insert_statement)
+    
+    delete_statement = f"DELETE FROM friend_requests WHERE friend_request_id=\"{request_id}\";"
+    cursor.execute(delete_statement)
+
+    db.connection.commit()
+
+    return jsonify({'success': 'ok'}), 200
+
 
 if __name__ == '__main__':
     app.config['DEBUG'] = True #will automatically reload server on any code change (will be useful in debugging)
-    app.run(debug=True)
-    socketio.run(app, port=5000, debug=True)
+    #app.run()
+    socketio.run(app, port=5000, debug=False)

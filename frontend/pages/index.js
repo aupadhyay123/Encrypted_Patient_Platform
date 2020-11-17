@@ -9,11 +9,12 @@ export default function Landing() {
   return (
     <div>
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
         <title>VAUNECT</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <img src={'/images/logo.png'} style={{width:'60%', position: 'relative', marginTop: '10%', left: '20%'}}/>
+      <img src={'/images/logo.png'} style={{width:'40%', position: 'relative', marginTop: '10%', left: '30%'}}/>
       <br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
       <img src={'/images/HomeScreen.png'} style={{width:'100%'}}/>
 

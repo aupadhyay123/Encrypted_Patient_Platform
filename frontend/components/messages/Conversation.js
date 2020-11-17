@@ -7,25 +7,34 @@ import Bubble from './Bubble';
 
 // socket.io
 import io from 'socket.io-client';
+import { useRouter } from 'next/router';
 
 // react.js
 import { useEffect, useState, useRef } from 'react';
 
-// next.js
-import { useRouter } from 'next/router';
+// redux
+import { connect } from 'react-redux';
+
+import {generate_key_nonce, encrypt_message, decrypt_message} from "../../encryption/Encryption";
 
 // react-scroll
 import { animateScroll } from 'react-scroll';
 
+
 let endpoint = 'http://localhost:5000';
-let socket = io.connect(endpoint);
-
-export default function Conversation(props) {
-  const router = useRouter();
-  const { user } = router.query;
-
+const socket = io.connect(endpoint);
+// let sessionID = 0; 
+// var socketConnection = io.connect();
+// socket.on('connect', function() {
+//   sessionID = socket.socket.sessionid; 
+// });
+function Conversation(props) {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const router = useRouter();
+  const { user } = router.query;
+  //console.log(socket.id);
+  socket.emit('loggedIn', user);
 
   const messagesEndRef = useRef(null);
 
@@ -38,10 +47,38 @@ export default function Conversation(props) {
   // will call when first time app render and
   // every time message length changes
   const getMessages = () => {
-    socket.on('message', msg => {
+    socket.on('private_message', async msg => {
+      console.log("im in here");
+      var key;
+      //var nonce;
+      var base_url = 'http://127.0.0.1:5000/'
+      const params = {
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({user1: "arif1", user2: "arif2"}),
+        method: "POST"
+      }
+      await fetch(base_url+'conversation/exists', params)
+          .then(data => {return data.json()})
+          .then(async res => {
+            if(res.results == 'False'){
+              throw new Error('Conversation does not exist')
+            }
+            else{
+              await fetch(base_url+'conversation/retrieve', params)
+                  .then(data => {return data.json()})
+                  .then(res => {
+                    var box = res.results
+                    //nonce = Uint8Array.from(box['nonce'])
+                    key = Uint8Array.from(box['secret_key'])
+                  })
+            }
+          })
+
       let receivedMessage = {
         'type': 1,
-        'text': msg
+        'text': decrypt_message(msg, key)
       }
       setMessages([...messages, receivedMessage]);
     });
@@ -54,14 +91,52 @@ export default function Conversation(props) {
 
   // will need to export wrapper that handles these events
   // const handleSendMessage = (txt) => sendMessage(text);
-  const sendMessage = () => {
-    if(message !== "") {
+  const sendMessage = async() => {
+    if(message.length < 40 && message !== "") {
       let sentMessage = {
         'type': 0,
         'text': message
       };
+
       setMessages([...messages, sentMessage]);
-      socket.emit('message', message);
+      var base_url = 'http://127.0.0.1:5000/'
+      const params = {
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({user1: "arif1", user2: "arif2"}),
+        method: "POST"
+      }
+      var key;
+      await fetch(base_url+'conversation/exists', params)
+          .then(data => {return data.json()})
+          .then(async res => {
+            if(res.results == 'False'){
+              var key_nonce = generate_key_nonce()
+              key = key_nonce['key']
+              const create_params = {
+                headers: {
+                  "content-type": "application/json"
+                },
+                body: JSON.stringify({user1: "arif1", user2: "arif2", secret_key: key}),
+                method: "POST"
+              }
+              fetch(base_url+'conversation', create_params)
+            }
+            else{
+              await fetch(base_url+'conversation/retrieve', params)
+                  .then(data => {return data.json()})
+                  .then(res => {
+                    var box = res.results
+                    //nonce = Uint8Array.from(box['nonce'])
+                    key = Uint8Array.from(box['secret_key'])
+                  })
+            }
+          })
+      //send message to server
+      socket.emit('message', encrypt_message(message, key), props.selectedConversation);
+      //socket.to(receiverSessionId).emit('message', encrypt_message(message, key));
+      
       setMessage("");
       console.log('Message sent!')
     }
@@ -78,12 +153,14 @@ export default function Conversation(props) {
 
   return (
     <div className={styles.container}>
-      {/* {!props.selected && 
+      {!props.selectedConversation && 
         <div className={styles.empty}>
-          <h1>Please select a conversation</h1>
+          <h1>Press on the "+" icon to start a conversation</h1>
+          <h1>or</h1>
+          <h1>Select a conversation</h1>
         </div>
-      } */}
-      {!props.selected &&
+      }
+      {props.selectedConversation &&
         <div className={styles.selected}>
           <div className={styles.conversation} id='conversation'>
             {messages.map(msg => (
@@ -98,3 +175,9 @@ export default function Conversation(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => ({
+  selectedConversation: state.conversations.selectedConversation,
+});
+
+export default connect(mapStateToProps)(Conversation);

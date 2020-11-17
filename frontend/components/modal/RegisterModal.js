@@ -7,12 +7,20 @@ import styles from './Modal.module.css';
 
 // next.js
 import Link from 'next/link';
-import useRouter from 'next/router';
+import {useRouter} from 'next/router';
+
+import {generate_key_pair} from '../../encryption/Encryption.js';
 
 // react.js
 import { useState } from 'react';
 
-export default function RegisterModal(props) {
+// redux
+import { connect } from 'react-redux';
+import { login } from '../../actions/login';
+
+function RegisterModal(props) {
+  const router = useRouter();
+
   // state
   const [username, setUsername] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -67,7 +75,9 @@ export default function RegisterModal(props) {
       console.log(phone);
       console.log(password);
 
-      const url = 'http://localhost:3000/register';
+      var key_array = generate_key_pair();
+      console.log(key_array);
+      const url = 'http://localhost:5000/register';
       fetch(url, {
         method: "POST",
         headers: {
@@ -79,18 +89,19 @@ export default function RegisterModal(props) {
           password: password,
           phone: phone,
           first_name: firstName,
-          last_name: lastName
+          last_name: lastName,
+          public_key: key_array['public_key'],
+          private_key: key_array['private_key']
         })
       })
       .then(res => {
           console.log(res);
           if(res.status === 200) {
-            alert("Successfully logged in");
-            // const router = useRouter();
-            // router.push('/dashboard/' + username);
+            props.loginUser(username);
+            router.push('/dashboard/' + username);
           }
           else {
-            console.log("Looks like there was a problem. Status cod: " + res.status);
+            console.log("Looks like there was a problem. Status code: " + res.status);
             return;
           }
       })
@@ -148,3 +159,9 @@ export default function RegisterModal(props) {
     </Modal>
   );
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  loginUser: (user) => dispatch(login(user))
+})
+
+export default connect(null, mapDispatchToProps)(RegisterModal);

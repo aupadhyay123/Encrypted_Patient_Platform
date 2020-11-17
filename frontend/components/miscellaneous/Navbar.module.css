@@ -17,7 +17,46 @@
   width: 45px;
   margin-left: 50px;
 }
-
 .signUp {
-  margin-right: 50px;
+  position: fixed;
+  right:8%;
 }
+
+.login {
+  position: fixed;
+  right:2%;
+}
+
+/*@media(max-width:1199px){
+    .signUp {
+      position: fixed;
+      right:8%;
+    }
+    
+    .login {
+      position: fixed;
+      right:2%;
+    }
+}
+@media(max-width: 991px){
+  .signUp {
+    position: fixed;
+    right: 8%;
+  }
+  
+  .login {
+    position: fixed;
+    right:2%;
+  }
+} */
+ @media(max-width: 767px){
+  .signUp {
+    position: fixed;
+    right: 13%;
+  }
+  
+  .login {
+    position: fixed;
+    right:2%;
+} 
+ }
