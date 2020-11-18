@@ -47,3 +47,11 @@ def get_all_conversations_by_user():
     user1 = data['user']
     get_response = conversation_dao.get_all_conversations_for_user(db, user1)
     return get_response, get_response['status']
+
+@conversation_blueprint.route('/conversation/getbyid', methods=['POST'])
+@cross_origin()
+def get_conversation_by_id():
+    data = request.json
+    id = data['conversation_id']
+    get_response = conversation_dao.get_conversation_by_id(db, id)
+    return get_response, get_response['status']
