@@ -39,3 +39,11 @@ def get_conversation():
     user2 = data['user2']
     get_response = conversation_dao.get_conversation(db, user1, user2)
     return get_response, get_response['status']
+
+@conversation_blueprint.route('/conversation/getall', methods=['POST'])
+@cross_origin()
+def get_all_conversations_by_user():
+    data = request.json
+    user1 = data['user']
+    get_response = conversation_dao.get_all_conversations_for_user(db, user1)
+    return get_response, get_response['status']

@@ -16,7 +16,7 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True)
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Qaz1234mko'
+#app.config['MYSQL_PASSWORD'] = 'Qaz1234mko'
 app.config['MYSQL_DB'] = 'vaunect'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['CORS_HEADERS'] = "Content-Type"
@@ -25,7 +25,9 @@ app.config['SECRET-KEY'] = 'thisisthesecretkey'
 
 db = MySQL(app)
 from .conversations import conversation_blueprint
+from .messages import messaging_blueprint
 app.register_blueprint(conversation_blueprint)
+app.register_blueprint(messaging_blueprint)
 
 #conversation_dao = ConversationDAO(db)
 
@@ -184,7 +186,7 @@ def search():
         user['username'] = i[0]
         
         #if the user has already sent a friend request to this user
-        search_from_friend_requests = f"""SELECT * from friend_requests where sender_id=\"{user_name}\" AND receiver_id=\"{i[0]}\";"""
+        search_from_friend_requests = f"""SELECT * from friend_requests where user_sender=\"{user_name}\" AND user_receiver=\"{i[0]}\";"""
         print(search_from_friend_requests)
 
         cursor.execute(search_from_friend_requests)
@@ -269,7 +271,7 @@ def friend_requests():
     req = request.get_json()
 
     user = req.get('user')
-    requests_statement = f"SELECT friend_request_id, sender_id FROM friend_requests WHERE receiver_id=\"{user}\";"
+    requests_statement = f"SELECT friend_request_id, user_sender FROM friend_requests WHERE user_receiver=\"{user}\";"
 
     cursor = db.connection.cursor()
     cursor.execute(requests_statement)
@@ -293,7 +295,7 @@ def update_friend_requests():
 
         sender = req.get('sender')
         receiver = req.get('receiver')
-        friend_request_statement = f"INSERT INTO friend_requests (sender_id, receiver_id) VALUES (\"{sender}\", \"{receiver}\");"
+        friend_request_statement = f"INSERT INTO friend_requests (user_sender, user_receiver) VALUES (\"{sender}\", \"{receiver}\");"
 
         cursor = db.connection.cursor()
         cursor.execute(friend_request_statement)

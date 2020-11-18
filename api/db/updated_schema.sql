@@ -98,7 +98,7 @@ DROP TABLE IF EXISTS `messages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `messages` (
-  `message_id` int(11) NOT NULL,
+  `message_id` int(11) NOT NULL AUTO_INCREMENT,
   `conversation_id` varchar(11) NOT NULL,
   `user_id` varchar(41) NOT NULL,
   `message` varchar(400) NOT NULL,
