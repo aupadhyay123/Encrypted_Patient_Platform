@@ -67,8 +67,9 @@ def protected():
 #server receives the message from sender and redirects it to the receiver
 @socketio.on('message')
 def message_received(msg, receiver):
-    emit('private_message', msg, room=onlineUsers.get(receiver))
-    return None
+    if onlineUsers.get(receiver) != None:
+        emit('private_message', msg, room=onlineUsers.get(receiver))
+        return None
 
 @socketio.on('loggedIn')
 def user_has_logged_in(username):

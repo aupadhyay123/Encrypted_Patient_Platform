@@ -3,8 +3,3 @@
   height: auto;
   overflow-y: auto;
 }
-
-.conversation {
-  display: flex;
-  justify-content: center;
-}

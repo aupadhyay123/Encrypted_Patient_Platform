@@ -17,10 +17,9 @@ import FriendRequest from './FriendRequest';
 
 function Profile(props) {
   useEffect(() => {
-    console.log('friends: ' + props.friends);
     getFriends();
     getFriendRequests();
-  }, []);
+  }, [])
 
   const getFriends = () => {
     const url = 'http://localhost:5000/friends';

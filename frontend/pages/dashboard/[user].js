@@ -8,6 +8,8 @@ import Content from '../../components/dashboard/Content';
 
 // redux
 import { connect } from 'react-redux';
+import { updateFriends } from '../../actions/updateFriends';
+import { updateFriendRequests } from '../../actions/updateFriendRequests';
 
 // react
 import { useEffect } from 'react';
@@ -21,7 +23,52 @@ function User(props) {
     if(!props.user) {
       router.push('/login');
     }
-  });
+
+    getFriends();
+    getFriendRequests();
+  }, []);
+
+  const getFriends = () => {
+    const url = 'http://localhost:5000/friends';
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        user: props.user,
+      }),
+    })
+    .then(res => {
+      return res.json();
+    })
+    .then(({ friends }) => {
+      console.log('friends', friends);
+      props.updateFriends(friends);
+    })
+  };
+
+  const getFriendRequests = () => {
+    const url = 'http://localhost:5000/friend-requests';
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        user: props.user,
+      }),
+    })
+    .then(res => {
+      return res.json();
+    })
+    .then(({ friend_requests }) => {
+      console.log('friend requests', friend_requests);
+      props.updateFriendRequests(friend_requests);
+    })
+  };
 
   return (
     <Layout>
@@ -38,4 +85,9 @@ const mapStateToProps = (state) => ({
   user: state.login.user
 });
 
-export default connect(mapStateToProps)(User);
+const dispatchStateToProps = (dispatch) => ({
+  updateFriends: (friends) => dispatch(updateFriends(friends)),
+  updateFriendRequests: (friendRequests) => dispatch(updateFriendRequests(friendRequests)),
+});
+
+export default connect(mapStateToProps, dispatchStateToProps)(User);

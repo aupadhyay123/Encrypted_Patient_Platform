@@ -43,6 +43,9 @@ function LoginModal(props) {
         props.loginUser(username);
         router.push('/dashboard/' + username);
       }
+      else if(res.status === 400) {
+        alert("The username or password is incorrect");
+      }
       else {
         console.log("Looks like there was a problem. Status code: " + res.status);
         return;

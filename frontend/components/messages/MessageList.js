@@ -1,3 +1,6 @@
+// components
+import MessageListItem from './MessageListItem';
+
 // redux
 import { connect } from 'react-redux';
 import { selectConversation } from '../../actions/selectConversation';
@@ -7,9 +10,7 @@ import styles from './MessageList.module.css';
 
 function MessageList(props) {
   const Conversations = props.conversations.map(conversation => (
-    <div key={conversation} className={styles.conversation}>
-      <h2>{conversation}</h2>
-    </div>
+    <MessageListItem username={conversation} />
   ));
 
   return (

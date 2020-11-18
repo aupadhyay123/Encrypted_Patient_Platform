@@ -100,6 +100,10 @@ function RegisterModal(props) {
             props.loginUser(username);
             router.push('/dashboard/' + username);
           }
+          else if(res.status === 400) {
+            setUsername('');
+            alert("This username already exists! Please choose a different username.");
+          }
           else {
             console.log("Looks like there was a problem. Status code: " + res.status);
             return;
