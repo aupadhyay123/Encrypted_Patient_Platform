@@ -80,6 +80,25 @@ class ConversationDAO():
             res.append(val)
         return {'results': res, 'success': True, 'status': 200}
 
+    def get_conversation_by_id(self, db, conversation_id):
+        cursor = db.connection.cursor()
+        get = """
+        SELECT 
+            conversation_id,
+            user1,
+            user2,
+            secret_key
+        FROM
+            vaunect.conversations
+        WHERE
+            conversation_id = %s
+        """
+        cursor.execute(get, (conversation_id, ))
+        results = cursor.fetchone()
+        key = results[3].split(',')
+        res = {'conversation_id': results[0], 'user1': results[1], 'user2': results[2], 'secret_key': key}
+        return {'results': res, 'success': True, 'status': 200}
+
 
 
 

@@ -56,7 +56,7 @@ function Conversation(props) {
         headers: {
           "content-type": "application/json"
         },
-        body: JSON.stringify({user1: "arif1", user2: "arif2"}),
+        body: JSON.stringify({user1: props.user, user2: props.selectedConversation}),
         method: "POST"
       }
       await fetch(base_url+'conversation/exists', params)
@@ -107,10 +107,11 @@ function Conversation(props) {
         headers: {
           "content-type": "application/json"
         },
-        body: JSON.stringify({user1: "arif1", user2: "arif2"}),
+        body: JSON.stringify({user1: props.user, user2: props.selectedConversation}),
         method: "POST"
       }
       var key;
+      var conversation_id;
       await fetch(base_url+'conversation/exists', params)
           .then(data => {return data.json()})
           .then(async res => {
@@ -121,10 +122,16 @@ function Conversation(props) {
                 headers: {
                   "content-type": "application/json"
                 },
-                body: JSON.stringify({user1: "arif1", user2: "arif2", secret_key: key}),
+                body: JSON.stringify({user1: props.user, user2: props.selectedConversation, secret_key: key}),
                 method: "POST"
               }
-              fetch(base_url+'conversation', create_params)
+              await fetch(base_url+'conversation', create_params)
+                  .then(data => {return data.json()})
+                  .then(res => {
+                    var box = res.results
+                    console.log(box)
+                    conversation_id = box['conversation_id']
+                  })
             }
             else{
               await fetch(base_url+'conversation/retrieve', params)
@@ -133,8 +140,22 @@ function Conversation(props) {
                     var box = res.results
                     //nonce = Uint8Array.from(box['nonce'])
                     key = Uint8Array.from(box['secret_key'])
+                    conversation_id = box['conversation_id']
                   })
             }
+            const message_params = {
+              headers: {
+                "content-type": "application/json"
+              },
+              body: JSON.stringify({conversation_id: conversation_id, user: props.user, message: message}),
+              method: "POST"
+            }
+            await fetch(base_url+'messages', message_params)
+                .then(data => {return data.json()})
+                .then(res => {
+                    console.log('!!!!!')
+                    console.log(res)
+                })
           })
       //send message to server
       socket.emit('message', encrypt_message(message, key), props.selectedConversation);
@@ -181,6 +202,7 @@ function Conversation(props) {
 
 const mapStateToProps = (state) => ({
   selectedConversation: state.conversations.selectedConversation,
+    user: state.login.user,
 });
 
 export default connect(mapStateToProps)(Conversation);
