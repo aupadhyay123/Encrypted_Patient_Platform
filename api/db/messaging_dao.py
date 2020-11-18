@@ -22,4 +22,5 @@ class MessagingDAO():
         """
         cursor.execute(get, (conversation_id, ))
         results = cursor.fetchall()
+        print(results)
         return {'results': results, 'success': True, 'status': 200}

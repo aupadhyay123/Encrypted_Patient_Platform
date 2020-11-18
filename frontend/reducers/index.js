@@ -6,3 +6,4 @@ export { default as friends } from './friends';
 export { default as friendRequests } from './friendRequests';
 export { default as conversations } from './conversations';
 export { default as friendSearchModal } from './friendSearchModal';
+export { default as messages } from './messages';

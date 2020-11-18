@@ -18,6 +18,11 @@ const conversations = (state = initialState, action) => {
         ...state,
         conversations: [{conversation_id: action.conversation_id, user: action.user}, ...state.conversations]
       };
+    case 'CLEAR_MESSAGES':
+      return {
+        ...state,
+        conversations: [],
+      };
     default:
       return state;
   }

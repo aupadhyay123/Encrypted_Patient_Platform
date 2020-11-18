@@ -4,6 +4,7 @@ import MessageListItem from './MessageListItem';
 // redux
 import { connect } from 'react-redux';
 import { addChatToConversations } from '../../actions/addChatToConversations';
+import { clearMessages } from '../../actions/clearMessages';
 
 // css
 import styles from './MessageList.module.css';
@@ -13,6 +14,7 @@ import { useEffect } from 'react';
 
 function MessageList(props) {
   useEffect(() => {
+    props.clearMessages();
     getConversations();
   }, []);
 
@@ -62,6 +64,7 @@ const mapStateToProps = (state) => ({
 
 const dispatchStateToProps = (dispatch) => ({
   addToConversations: (id, username) => dispatch(addChatToConversations(id, username)),
+  clearMessages: () => dispatch(clearMessages()),
 });
 
 export default connect(mapStateToProps, dispatchStateToProps)(MessageList);

@@ -20,7 +20,6 @@ import {generate_key_nonce, encrypt_message, decrypt_message} from "../../encryp
 // react-scroll
 import { animateScroll } from 'react-scroll';
 
-
 let endpoint = 'http://localhost:5000';
 const socket = io.connect(endpoint);
 // let sessionID = 0; 
@@ -42,7 +41,7 @@ function Conversation(props) {
   useEffect(() => {
     getMessages();
     scrollToBottom();
-  }, [messages.length]);
+  }, [messages.length, props.selectedConversation]);
   
   // will call when first time app render and
   // every time message length changes
@@ -203,6 +202,7 @@ function Conversation(props) {
 const mapStateToProps = (state) => ({
   selectedConversation: state.conversations.selectedConversation,
   user: state.login.user,
+  message: state.messages.messages,
 });
 
 export default connect(mapStateToProps)(Conversation);
