@@ -1,5 +1,5 @@
 const initialState = {
-  selectedConversation: '',
+  selectedConversation: {},
   conversations: [],
 };
 
@@ -8,12 +8,15 @@ const conversations = (state = initialState, action) => {
     case 'SELECT_CONVERSATION':
       return {
         ...state,
-        selectedConversation: action.user,
+        selectedConversation: {
+          conversation_id: action.conversation_id,
+          user: action.user,
+        },
       };
     case 'ADD_CHAT_TO_CONVERSATIONS':
       return {
         ...state,
-        conversations: [action.user, ...state.conversations]
+        conversations: [{conversation_id: action.conversation_id, user: action.user}, ...state.conversations]
       };
     default:
       return state;

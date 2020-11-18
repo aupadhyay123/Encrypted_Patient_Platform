@@ -67,7 +67,10 @@ function Conversation(props) {
             }
             else{
               await fetch(base_url+'conversation/retrieve', params)
-                  .then(data => {return data.json()})
+                  .then(data => {
+                    console.log(data.json());
+                    return data.json();
+                  })
                   .then(res => {
                     var box = res.results
                     //nonce = Uint8Array.from(box['nonce'])

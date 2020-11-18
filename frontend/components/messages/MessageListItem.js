@@ -7,18 +7,14 @@ import styles from './MessageListItem.module.css';
 
 function MessageListItem(props) {
   return (
-    <div className={styles.container} onClick={() => props.selectConversation(props.username)}>
+    <div className={styles.container} onClick={() => props.selectConversation(props.id, props.username)}>
       <h2>{props.username}</h2>
     </div>
   );
 }
 
-const mapStateToProps = (state) => ({
-  selectedConversation: state.conversations.selectedConversation,
-});
-
 const dispatchStateToProps = (dispatch) => ({
-  selectConversation: (username) => dispatch(selectConversation(username)),
+  selectConversation: (id, username) => dispatch(selectConversation(id, username)),
 });
 
-export default connect(mapStateToProps, dispatchStateToProps)(MessageListItem);
+export default connect(null, dispatchStateToProps)(MessageListItem);
