@@ -202,7 +202,7 @@ function Conversation(props) {
 
 const mapStateToProps = (state) => ({
   selectedConversation: state.conversations.selectedConversation,
-    user: state.login.user,
+  user: state.login.user,
 });
 
 export default connect(mapStateToProps)(Conversation);

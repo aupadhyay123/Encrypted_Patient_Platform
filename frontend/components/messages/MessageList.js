@@ -3,7 +3,7 @@ import MessageListItem from './MessageListItem';
 
 // redux
 import { connect } from 'react-redux';
-import { addChatToConversation } from '../../actions/addChatToConversations';
+import { addChatToConversations } from '../../actions/addChatToConversations';
 
 // css
 import styles from './MessageList.module.css';
@@ -28,7 +28,7 @@ function MessageList(props) {
       }),
       method: "POST"
     }
-    await fetch(base_url + 'conversations/getall', params)
+    await fetch(base_url + 'conversation/getall', params)
     .then(data => {
       return data.json();
     })
@@ -38,14 +38,14 @@ function MessageList(props) {
       for(var i = 0; i < res.length; i++) {
         var username = (res[i].user1 === props.user) ? res[i].user2 : res[i].user1;
         var id = res[i].conversation_id;
-
+        
         props.addToConversations(id, username);
       }
     })
   };
 
   const Conversations = props.conversations.map(conversation => (
-    <MessageListItem username={conversation.user} id={conversation.id} />
+    <MessageListItem username={conversation.user} id={conversation.conversation_id} />
   ));
 
   return (

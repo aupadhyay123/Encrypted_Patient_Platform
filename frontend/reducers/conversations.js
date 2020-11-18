@@ -1,5 +1,5 @@
 const initialState = {
-  selectedConversation: {},
+  selectedConversation: null,
   conversations: [],
 };
 

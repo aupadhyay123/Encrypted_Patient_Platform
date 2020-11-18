@@ -1,4 +1,4 @@
-export const selectConversation = (username, id) => {
+export const selectConversation = (id, username) => {
   return {
     type: 'SELECT_CONVERSATION',
     conversation_id: id,
