@@ -23,7 +23,6 @@ def get_all_messages_for_convo():
     conversation_id = int(data['conversation_id'])
     get_response = messaging_dao.get_conversation(db, conversation_id)
     dates = get_response['results']
-    print(dates[0][4], type(dates[0][4]))
     sorted_dates = sorted(dates, key=lambda i: i[4], reverse=False)
     get_response['results'] = sorted_dates
     return get_response, get_response['status']
