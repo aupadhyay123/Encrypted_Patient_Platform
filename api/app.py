@@ -16,7 +16,7 @@ app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True)
 app.config['MYSQL_USER'] = 'root'
-#app.config['MYSQL_PASSWORD'] = 'Qaz1234mko'
+app.config['MYSQL_PASSWORD'] = 'Qaz1234mko'
 app.config['MYSQL_DB'] = 'vaunect'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['CORS_HEADERS'] = "Content-Type"

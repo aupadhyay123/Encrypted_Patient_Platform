@@ -11,12 +11,20 @@ const conversations = (state = initialState, action) => {
         selectedConversation: {
           conversation_id: action.conversation_id,
           user: action.user,
+          key: action.key,
         },
       };
     case 'ADD_CHAT_TO_CONVERSATIONS':
       return {
         ...state,
-        conversations: [{conversation_id: action.conversation_id, user: action.user}, ...state.conversations]
+        conversations: [
+          {
+            conversation_id: action.conversation_id, 
+            user: action.user,
+            key: action.key
+          }, 
+          ...state.conversations
+        ]
       };
     case 'CLEAR_MESSAGES':
       return {

@@ -40,14 +40,15 @@ function MessageList(props) {
       for(var i = 0; i < res.length; i++) {
         var username = (res[i].user1 === props.user) ? res[i].user2 : res[i].user1;
         var id = res[i].conversation_id;
-        
-        props.addToConversations(id, username);
+        var key = Uint8Array.from(res[i].secret_key);
+
+        props.addToConversations(id, username, key);
       }
     })
   };
 
   const Conversations = props.conversations.map(conversation => (
-    <MessageListItem username={conversation.user} id={conversation.conversation_id} />
+    <MessageListItem username={conversation.user} id={conversation.conversation_id} secret_key={conversation.key} />
   ));
 
   return (
@@ -63,7 +64,7 @@ const mapStateToProps = (state) => ({
 });
 
 const dispatchStateToProps = (dispatch) => ({
-  addToConversations: (id, username) => dispatch(addChatToConversations(id, username)),
+  addToConversations: (id, username, key) => dispatch(addChatToConversations(id, username, key)),
   clearMessages: () => dispatch(clearMessages()),
 });
 

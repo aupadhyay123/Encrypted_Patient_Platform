@@ -43,8 +43,8 @@ function FriendSearchItem(props) {
         conversation_id = box['conversation_id']
       })
 
-      props.addChatToConversations(conversation_id, username);
-      props.selectConversation(conversation_id, username);
+      props.addChatToConversations(conversation_id, username, key);
+      props.selectConversation(conversation_id, username, key);
     }
     
     props.toggleFriendSearchModal();
@@ -63,9 +63,9 @@ const mapStateToProps = (state) => ({
 });
 
 const dispatchStateToProps = (dispatch) => ({
-  selectConversation: (id, username) => dispatch(selectConversation(id, username)),
+  selectConversation: (id, username, key) => dispatch(selectConversation(id, username, key)),
   toggleFriendSearchModal: () => dispatch(toggleFriendSearchModal()),
-  addChatToConversations: (id, username) => dispatch(addChatToConversations(id, username))
+  addChatToConversations: (id, username, key) => dispatch(addChatToConversations(id, username, key))
 });
 
 export default connect(mapStateToProps, dispatchStateToProps)(FriendSearchItem);

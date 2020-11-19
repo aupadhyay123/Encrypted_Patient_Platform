@@ -8,7 +8,7 @@ import styles from './MessageListItem.module.css';
 
 function MessageListItem(props) {
   const handleConversationSelect = async () => {
-    props.selectConversation(props.id, props.username);
+    props.selectConversation(props.id, props.username, props.secret_key);
 
     var base_url = 'http://127.0.0.1:5000/'
     const params = {
@@ -39,7 +39,7 @@ function MessageListItem(props) {
 }
 
 const dispatchStateToProps = (dispatch) => ({
-  selectConversation: (id, username) => dispatch(selectConversation(id, username)),
+  selectConversation: (id, username, key) => dispatch(selectConversation(id, username, key)),
   updateMessages: (messages) => dispatch(updateMessages(messages)),
 });
 
