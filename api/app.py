@@ -70,11 +70,15 @@ def protected():
 @socketio.on('message')
 def message_received(msg, receiver):
     if onlineUsers.get(receiver) != None:
+        print('receiver ', receiver)
         emit('private_message', msg, room=onlineUsers.get(receiver))
         return None
+    print('receiver ', receiver)
 
 @socketio.on('loggedIn')
 def user_has_logged_in(username):
+    print('bulls drafted a rando')
+    print(username)
     onlineUsers[str(username)] = request.sid
     print(onlineUsers)
     return None

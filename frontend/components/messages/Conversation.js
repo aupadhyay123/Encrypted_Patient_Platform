@@ -38,21 +38,25 @@ function Conversation(props) {
 
   // this will automatically be called when messaage length changes
   useEffect(() => {
-    getMessages();
-    scrollToBottom();
-  }, [props.messages.length, props.selectedConversation]);
+    if (props.selectedConversation) {
+      getMessages();
+      scrollToBottom();
+    }
+  }, [props.messages.length]);
   
   // will call when first time app render and
   // every time message length changes
   const getMessages = () => {
-    socket.on('private_message', async msg => {
-      console.log(props);
+    socket.on('private_message', msg => {
       let receivedMessage = {
         'type': 1,
         'text': decrypt_message(msg, props.selectedConversation.key),
       }
 
       props.addMessage(receivedMessage);
+      console.log('selected conversation: ' + props.selectedConversation);
+      console.log('user: ' + props.selectedConversation.user);
+      console.log('key: ' + props.selectedConversation.key);
     });
   };
 
@@ -64,7 +68,7 @@ function Conversation(props) {
   // will need to export wrapper that handles these events
   // const handleSendMessage = (txt) => sendMessage(text);
   const sendMessage = async() => {
-    if(message.length < 40 && message !== "") {
+    if(message !== "") {
       let sentMessage = {
         'type': 0,
         'text': message
@@ -92,7 +96,8 @@ function Conversation(props) {
           console.log(res)
       })
 
-      console.log('key' + props.selectedConversation.key);
+      console.log('user: ' + props.selectedConversation.user);
+      console.log('key: ' + props.selectedConversation.key);
       //send message to server
       socket.emit('message', encrypt_message(message, props.selectedConversation.key), props.selectedConversation.user);
       //socket.to(receiverSessionId).emit('message', encrypt_message(message, key));
