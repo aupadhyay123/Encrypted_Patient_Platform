@@ -21,7 +21,7 @@ const conversations = (state = initialState, action) => {
           {
             conversation_id: action.conversation_id, 
             user: action.user,
-            key: action.key
+            key: action.key,
           }, 
           ...state.conversations
         ]

@@ -1,7 +1,7 @@
 // redux
 import { connect } from 'react-redux';
 import { selectConversation } from '../../actions/selectConversation';
-import { updateMessages } from '../../actions/updateMessages';
+import { setMessages } from '../../actions/setMessages';
 
 // css
 import styles from './MessageListItem.module.css';
@@ -26,8 +26,24 @@ function MessageListItem(props) {
       return data.json();
     })
     .then(results => {
+      var messages_result = [];
       var messages = results.results;
-      console.log('messages', messages);
+
+      for(var i = 0; i < messages.length; i++) {
+        var msg = {};
+        if(messages[i][2] === props.user) {
+          msg.type = 0;
+        }
+        else {
+          msg.type = 1;
+        }
+        msg.text = messages[i][3];
+      
+        messages_result.push(msg);
+      }
+      console.log('messages', messages_result);
+
+      props.setMessages(messages_result);
     })
   };
 
@@ -38,9 +54,13 @@ function MessageListItem(props) {
   );
 }
 
-const dispatchStateToProps = (dispatch) => ({
-  selectConversation: (id, username, key) => dispatch(selectConversation(id, username, key)),
-  updateMessages: (messages) => dispatch(updateMessages(messages)),
+const mapStateToProps = (state) => ({
+  user: state.login.user,
 });
 
-export default connect(null, dispatchStateToProps)(MessageListItem);
+const dispatchStateToProps = (dispatch) => ({
+  selectConversation: (id, username, key) => dispatch(selectConversation(id, username, key)),
+  setMessages: (messages) => dispatch(setMessages(messages)),
+});
+
+export default connect(mapStateToProps, dispatchStateToProps)(MessageListItem);

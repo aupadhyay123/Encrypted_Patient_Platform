@@ -10,15 +10,17 @@ import io from 'socket.io-client';
 import { useRouter } from 'next/router';
 
 // react.js
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 // redux
 import { connect } from 'react-redux';
+import { addMessage } from '../../actions/addMessage';
 
 import {generate_key_nonce, encrypt_message, decrypt_message} from "../../encryption/Encryption";
 
 // react-scroll
 import { animateScroll } from 'react-scroll';
+import { setMessages } from '../../actions/setMessages';
 
 let endpoint = 'http://localhost:5000';
 const socket = io.connect(endpoint);
@@ -28,32 +30,29 @@ const socket = io.connect(endpoint);
 //   sessionID = socket.socket.sessionid; 
 // });
 function Conversation(props) {
-  const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const router = useRouter();
   const { user } = router.query;
   //console.log(socket.id);
   socket.emit('loggedIn', user);
 
-  const messagesEndRef = useRef(null);
-
   // this will automatically be called when messaage length changes
   useEffect(() => {
     getMessages();
     scrollToBottom();
-  }, [messages.length, props.selectedConversation]);
+  }, [props.messages.length, props.selectedConversation]);
   
   // will call when first time app render and
   // every time message length changes
   const getMessages = () => {
     socket.on('private_message', async msg => {
-      console.log("im in here");
-
+      console.log(props);
       let receivedMessage = {
         'type': 1,
         'text': decrypt_message(msg, props.selectedConversation.key),
       }
-      setMessages([...messages, receivedMessage]);
+
+      props.addMessage(receivedMessage);
     });
   };
 
@@ -71,7 +70,7 @@ function Conversation(props) {
         'text': message
       };
 
-      setMessages([...messages, sentMessage]);
+      props.addMessage(sentMessage);
 
       var base_url = 'http://127.0.0.1:5000/'
       
@@ -124,7 +123,7 @@ function Conversation(props) {
       {props.selectedConversation &&
         <div className={styles.selected}>
           <div className={styles.conversation} id='conversation'>
-            {messages.map(msg => (
+            {props.messages.map(msg => (
               <div>
                 <Bubble type={msg['type']} text={msg['text']} />
               </div>
@@ -143,4 +142,8 @@ const mapStateToProps = (state) => ({
   messages: state.messages.messages,
 });
 
-export default connect(mapStateToProps)(Conversation);
+const dispatchStateToProps = (dispatch) => ({
+  addMessage: (message) => dispatch(addMessage(message)),
+});
+
+export default connect(mapStateToProps, dispatchStateToProps)(Conversation);
